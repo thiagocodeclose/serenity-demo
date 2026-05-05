@@ -25,14 +25,14 @@ const body = DM_Sans({
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://prana-studio-demo.vercel.app';
 
-const DEFAULT_TITLE = 'Prana Studio | Yoga, Pilates & Wellness · Santa Monica, CA';
+const DEFAULT_TITLE = 'Serenity Wellness Studio | Yoga, Pilates & Meditation · Austin, TX';
 const DEFAULT_DESC = "Santa Monica's premier yoga, pilates & wellness studio. Drop-in classes, memberships & private sessions. 2,400+ members. 4.9★ on Google. First class free.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getKorivaConfig();
   const title = config?.seo?.title || DEFAULT_TITLE;
   const description = config?.seo?.description || DEFAULT_DESC;
-  const gymName = config?.gym?.name || 'Prana Studio';
+  const gymName = config?.gym?.name || 'Serenity Wellness Studio';
   return {
     metadataBase: new URL(BASE_URL),
     title: { default: title, template: `%s | ${gymName}` },

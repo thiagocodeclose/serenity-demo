@@ -52,7 +52,7 @@ export function PricingSection() {
         <Reveal delay={0.1}>
           <iframe
             src={src}
-            title="Prana Studio Pricing"
+            title="Serenity Wellness Studio Pricing"
             className="koriva-widget-frame"
             style={{ height: `${iframeHeight}px` }}
             allow="clipboard-write"

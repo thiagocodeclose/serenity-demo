@@ -59,7 +59,7 @@ export function ClassesSection() {
             <iframe
               ref={iframeRef}
               src={src}
-              title="Prana Studio Classes"
+              title="Serenity Wellness Studio Classes"
               className="koriva-widget-frame"
               style={{ height: `${iframeHeight}px` }}
               allow="clipboard-write"

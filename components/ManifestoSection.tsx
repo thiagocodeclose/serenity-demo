@@ -68,7 +68,7 @@ export function ManifestoSection() {
 
           <Reveal delay={0.4}>
             <p className="font-body text-white/50 text-sm tracking-[0.2em] uppercase">
-              — Prana Studio · Santa Monica
+              — Serenity Wellness Studio · Austin
             </p>
           </Reveal>
 

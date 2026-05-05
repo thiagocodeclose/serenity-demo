@@ -7,7 +7,7 @@ export const koriva = {
 
 // ─── Studio identity ──────────────────────────────────────────────────────────
 export const studio = {
-  name: 'Prana Studio',
+  name: 'Serenity Wellness Studio',
   tagline: 'Where Breath Becomes Movement.',
   description:
     "Santa Monica's premier sanctuary for yoga, pilates, and mindful movement. Designed for those who seek transformation — body, mind, and spirit.",
@@ -58,7 +58,7 @@ export const instructors = [
     role: 'Instructor',
     specialty: 'Yin Yoga · Breathwork',
     years: 7,
-    bio: 'James specializes in the therapeutic side of yoga — slow, intentional, deeply restorative. His yin and breathwork sessions are consistently rated among the most transformative at Prana.',
+    bio: 'James specializes in the therapeutic side of yoga — slow, intentional, deeply restorative. His yin and breathwork sessions are consistently rated among the most transformative at Serenity.',
     image:
       'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=85&auto=format&fit=crop',
     instagram: '#',
@@ -69,7 +69,7 @@ export const instructors = [
 export const testimonials = [
   {
     quote:
-      "Walking into Prana Studio felt like coming home. After two weeks, my anxiety disappeared. After two months, I became someone I didn't know I could be.",
+      "Walking into Serenity felt like coming home. After two weeks, my anxiety disappeared. After two months, I became someone I didn't know I could be.",
     name: 'Lauren K.',
     title: 'Member since 2023',
     image:
@@ -85,7 +85,7 @@ export const testimonials = [
   },
   {
     quote:
-      "Prana Studio changed my relationship with my own body. The space is stunning, the community is warm, and Maya's sunrise flow is pure magic.",
+      "Serenity changed my relationship with my own body. The space is stunning, the community is warm, and Maya's sunrise flow is pure magic.",
     name: 'Camille D.',
     title: 'Member since 2024',
     image:

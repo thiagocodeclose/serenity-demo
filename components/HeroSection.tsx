@@ -12,7 +12,7 @@ import { useSiteData } from '@/components/SiteDataProvider';
  * SERENITY — Masonry Editorial Hero
  * Structure: Giant headline top + 3-column asymmetric image grid below
  * Reference: Alo Yoga editorial, Wanderlust festival aesthetic
- * Key difference from Prana: NO full-bleed background image.
+ * Key difference: split-screen card layout, no full-bleed background image.
  * Text is ABOVE the photography grid — editorial separation.
  */
 export function HeroSection() {

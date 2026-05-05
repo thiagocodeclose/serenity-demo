@@ -71,7 +71,7 @@ export function CTASection() {
             <div className="max-w-lg mx-auto">
               <iframe
                 src={src}
-                title="Join Prana Studio"
+                title="Join Serenity Wellness Studio"
                 className="koriva-widget-frame"
                 style={{ height: `${iframeHeight}px` }}
                 allow="clipboard-write"
