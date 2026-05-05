@@ -27,7 +27,7 @@ export function Header() {
     portal_url: '#',
   });
   const siteData = useSiteData();
-  const gymName = siteData?.gym?.name?.toUpperCase() || 'PRANA STUDIO';
+  const gymName = siteData?.gym?.name?.toUpperCase() || 'SERENITY WELLNESS';
   const logoUrl = siteData?.brand?.logo_url;
 
   useEffect(() => {

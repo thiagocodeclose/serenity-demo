@@ -15,7 +15,7 @@ export function Footer() {
   });
 
   const siteData = useSiteData();
-  const gymName = siteData?.gym?.name?.toUpperCase() || 'PRANA STUDIO';
+  const gymName = siteData?.gym?.name?.toUpperCase() || 'SERENITY WELLNESS';
   const instagram = siteData?.brand?.instagram_url || siteData?.gym?.instagram || studio.social.instagram;
   const facebook = siteData?.brand?.facebook_url || siteData?.gym?.facebook || studio.social.facebook;
   const currentYear = new Date().getFullYear();
