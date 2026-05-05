@@ -23,7 +23,7 @@ const body = DM_Sans({
   display: 'swap',
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://prana-studio-demo.vercel.app';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://serenity-demo.vercel.app';
 
 const DEFAULT_TITLE = 'Serenity Wellness Studio | Yoga, Pilates & Meditation · Austin, TX';
 const DEFAULT_DESC = "Santa Monica's premier yoga, pilates & wellness studio. Drop-in classes, memberships & private sessions. 2,400+ members. 4.9★ on Google. First class free.";

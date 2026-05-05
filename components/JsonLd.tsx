@@ -1,6 +1,6 @@
 import { studio } from '@/lib/site-data';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://prana-studio-demo.vercel.app';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://serenity-demo.vercel.app';
 
 export function JsonLd() {
   const schema = {

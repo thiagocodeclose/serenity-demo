@@ -1,7 +1,7 @@
 // ─── Koriva integration ───────────────────────────────────────────────────────
 export const koriva = {
   baseUrl: process.env.NEXT_PUBLIC_CODEGYM_URL || 'https://app.codegyms.com',
-  gymSlug: process.env.NEXT_PUBLIC_GYM_SLUG || 'prana-studio',
+  gymSlug: process.env.NEXT_PUBLIC_GYM_SLUG || 'serenity-wellness',
   widgetKey: process.env.NEXT_PUBLIC_WIDGET_KEY || '',
 };
 
@@ -18,11 +18,11 @@ export const studio = {
     zip: '90401',
   },
   phone: '(310) 555-0192',
-  email: 'hello@pranastudio.com',
+  email: 'hello@serenitywellness.com',
   social: {
-    instagram: 'https://instagram.com/pranastudio',
-    facebook: 'https://facebook.com/pranastudio',
-    youtube: 'https://youtube.com/@pranastudio',
+    instagram: 'https://instagram.com/serenitywellness',
+    facebook: 'https://facebook.com/serenitywellness',
+    youtube: 'https://youtube.com/@serenitywellness',
   },
   hours: {
     'Mon–Fri': '6:00 AM – 9:00 PM',
