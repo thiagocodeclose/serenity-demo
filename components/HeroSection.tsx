@@ -14,10 +14,11 @@ import { useSiteData } from '@/components/SiteDataProvider';
  */
 
 const WELLNESS_VIDEOS = [
-  'https://videos.pexels.com/video-files/3843452/3843452-hd_1280_720_25fps.mp4',
-  'https://videos.pexels.com/video-files/4473628/4473628-hd_1280_720_24fps.mp4',
-  'https://videos.pexels.com/video-files/5319139/5319139-hd_1280_720_25fps.mp4',
-  'https://videos.pexels.com/video-files/4057537/4057537-hd_1280_720_24fps.mp4',
+  '/videos/wellness-1.mp4',
+  '/videos/wellness-2.mp4',
+  '/videos/wellness-3.mp4',
+  '/videos/wellness-4.mp4',
+  '/videos/wellness-5.mp4',
 ];
 
 const FADE_MS = 1400;
