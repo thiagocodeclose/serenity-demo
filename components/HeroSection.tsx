@@ -1,7 +1,6 @@
 // @ts-nocheck
 'use client';
-import { useState, useEffect } from 'react';
-
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -9,37 +8,78 @@ import { useKorivaElement } from '@/hooks/useKorivaElement';
 import { useSiteData } from '@/components/SiteDataProvider';
 
 /**
- * SERENITY — Masonry Editorial Hero
- * Structure: Giant headline top + 3-column asymmetric image grid below
- * Reference: Alo Yoga editorial, Wanderlust festival aesthetic
- * Key difference: split-screen card layout, no full-bleed background image.
- * Text is ABOVE the photography grid — editorial separation.
+ * SERENITY — Editorial Hero with ambient video slideshow
+ * Layout: giant headline top (editorial) + ambient video section below
+ * Videos cycle automatically with opacity crossfade + subtle scale effect
  */
-export function HeroSection() {
 
+const WELLNESS_VIDEOS = [
+  'https://videos.pexels.com/video-files/3843452/3843452-hd_1280_720_25fps.mp4',
+  'https://videos.pexels.com/video-files/4473628/4473628-hd_1280_720_24fps.mp4',
+  'https://videos.pexels.com/video-files/5319139/5319139-hd_1280_720_25fps.mp4',
+  'https://videos.pexels.com/video-files/4057537/4057537-hd_1280_720_24fps.mp4',
+];
+
+const FADE_MS = 1400;
+
+export function HeroSection() {
   const [bookingIntegration, setBookingIntegration] = useState<{
     booking_enabled: boolean;
     booking_url: string;
   }>({ booking_enabled: false, booking_url: '#' });
+
   const siteData = typeof useSiteData === 'function' ? useSiteData() : null;
 
-  const eyebrow = useKorivaElement('hero_eyebrow', { content: 'Yoga · Pilates · Mindful Movement', visible: true }, { section: 'Hero', label: 'Eyebrow', type: 'eyebrow' });
-  const hl1 = useKorivaElement('hero_headline_1', { content: 'Stillness', visible: true }, { section: 'Hero', label: 'Headline', type: 'text' });
-  const hl2 = useKorivaElement('hero_headline_2', { content: 'lives here.', visible: true }, { section: 'Hero', label: 'Tagline', type: 'text' });
-  const subtitle = useKorivaElement('hero_subtitle', { content: "Santa Monica's premier sanctuary for yoga, pilates & breathwork.", visible: true }, { section: 'Hero', label: 'Description', type: 'text' });
-  const cta1 = useKorivaElement('hero_cta_primary', { content: 'Book Free Class', visible: true }, { section: 'Hero', label: 'CTA Primary', type: 'button' });
-  const cta2 = useKorivaElement('hero_cta_secondary', { content: 'View Schedule', visible: true }, { section: 'Hero', label: 'CTA Secondary', type: 'button' });
-  const heroBg = useKorivaElement('hero_bg', { content: '', mediaType: 'image', visible: true }, { section: 'Hero', label: 'Main Image (Card 1)', type: 'image' });
+  // ── Dual-buffer video slideshow ──────────────────────────────
+  const activeSlotRef = useRef<'a' | 'b'>('a');
+  const [activeSlot, setActiveSlot] = useState<'a' | 'b'>('a');
+  const idxRef = useRef({ a: 0, b: 1 });
+  const refA = useRef<HTMLVideoElement>(null);
+  const refB = useRef<HTMLVideoElement>(null);
 
-  const img1 = heroBg.content || siteData?.hero_url || 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=900&q=80&auto=format&fit=crop&crop=top';
-  const img2 = 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=900&q=80&auto=format&fit=crop&crop=center';
-  const img3 = 'https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?w=700&q=80&auto=format&fit=crop';
+  useEffect(() => {
+    refA.current?.play().catch(() => {});
+  }, []);
 
+  const handleVideoEnd = (slot: 'a' | 'b') => {
+    if (slot !== activeSlotRef.current) return;
+
+    const otherSlot = slot === 'a' ? 'b' : 'a';
+    const otherRef  = slot === 'a' ? refB : refA;
+    const thisRef   = slot === 'a' ? refA : refB;
+
+    // Start the buffered video
+    otherRef.current?.play().catch(() => {});
+
+    // Swap visible slot
+    activeSlotRef.current = otherSlot;
+    setActiveSlot(otherSlot);
+
+    // After crossfade completes, preload the next video into the now-hidden slot
+    setTimeout(() => {
+      const nextIdx = (idxRef.current[otherSlot] + 1) % WELLNESS_VIDEOS.length;
+      idxRef.current[slot] = nextIdx;
+      if (thisRef.current) {
+        thisRef.current.src = WELLNESS_VIDEOS[nextIdx];
+        thisRef.current.load();
+      }
+    }, FADE_MS + 200);
+  };
+
+  // ── Koriva editable elements ─────────────────────────────────
+  const eyebrow  = useKorivaElement('hero_eyebrow',       { content: 'Yoga · Pilates · Mindful Movement', visible: true }, { section: 'Hero', label: 'Eyebrow', type: 'eyebrow' });
+  const hl1      = useKorivaElement('hero_headline_1',    { content: 'Stillness', visible: true },                         { section: 'Hero', label: 'Headline', type: 'text' });
+  const hl2      = useKorivaElement('hero_headline_2',    { content: 'lives here.', visible: true },                       { section: 'Hero', label: 'Tagline', type: 'text' });
+  const subtitle = useKorivaElement('hero_subtitle',      { content: "Austin's premier sanctuary for yoga, pilates & breathwork.", visible: true }, { section: 'Hero', label: 'Description', type: 'text' });
+  const cta1     = useKorivaElement('hero_cta_primary',   { content: 'Book Free Class', visible: true },                   { section: 'Hero', label: 'CTA Primary', type: 'button' });
+  const cta2     = useKorivaElement('hero_cta_secondary', { content: 'View Schedule', visible: true },                     { section: 'Hero', label: 'CTA Secondary', type: 'button' });
+
+  // ── Integration listener ─────────────────────────────────────
   useEffect(() => {
     function handleBrand(e: Event) {
       const d = (e as CustomEvent).detail as Record<string, unknown>;
       if (d.booking_enabled !== undefined || d.gym_slug !== undefined) {
-        const slug = (d.gym_slug as string) || '';
+        const slug    = (d.gym_slug as string) || '';
         const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.codegyms.com';
         setBookingIntegration({
           booking_enabled: !!(d.booking_enabled),
@@ -50,77 +90,254 @@ export function HeroSection() {
     window.addEventListener('koriva:brand', handleBrand);
     return () => window.removeEventListener('koriva:brand', handleBrand);
   }, []);
+
+  const bookingHref = bookingIntegration.booking_enabled ? bookingIntegration.booking_url : '#classes';
+
   return (
-    <section style={{ backgroundColor: 'var(--cg-bg, #FAF9F6)', minHeight: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <section style={{
+      backgroundColor: 'var(--cg-bg, #FAF9F6)',
+      minHeight: '100vh',
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
 
-      {/* ── Editorial header: giant headline left + subtitle/CTA right ─── */}
-      <div style={{ paddingTop: '130px', paddingBottom: '36px', paddingLeft: '6vw', paddingRight: '6vw', display: 'grid', gridTemplateColumns: '1fr 280px', alignItems: 'end', gap: '3rem' }}>
-
+      {/* ── Editorial text section ────────────────────────────── */}
+      <div style={{
+        paddingTop: '130px',
+        paddingBottom: '36px',
+        paddingLeft: '6vw',
+        paddingRight: '6vw',
+        display: 'grid',
+        gridTemplateColumns: '1fr 280px',
+        alignItems: 'end',
+        gap: '3rem',
+      }}>
         <div>
           {eyebrow.visible && (
-            <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-              style={{ fontSize: '11px', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--cg-primary, #8B7355)', marginBottom: '20px', fontFamily: 'var(--font-body)' }}>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              style={{
+                fontSize: '11px',
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                color: 'var(--cg-primary, #8B7355)',
+                marginBottom: '20px',
+                fontFamily: 'var(--font-body)',
+              }}
+            >
               {eyebrow.content}
             </motion.p>
           )}
+
           <div style={{ overflow: 'hidden' }}>
-            <motion.h1 initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 1.0, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(3.8rem, 10vw, 9.5rem)', lineHeight: 0.92, fontWeight: 300, color: 'var(--cg-text, #2C2C2C)', letterSpacing: '-0.025em', margin: 0 }}>
+            <motion.h1
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              transition={{ duration: 1.0, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: 'clamp(3.8rem, 10vw, 9.5rem)',
+                lineHeight: 0.92,
+                fontWeight: 300,
+                color: 'var(--cg-text, #2C2C2C)',
+                letterSpacing: '-0.025em',
+                margin: 0,
+              }}
+            >
               {hl1.content}
             </motion.h1>
           </div>
+
           <div style={{ overflow: 'hidden' }}>
-            <motion.h1 initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 1.0, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(3.8rem, 10vw, 9.5rem)', lineHeight: 0.92, fontWeight: 300, fontStyle: 'italic', color: 'var(--cg-primary, #8B7355)', letterSpacing: '-0.025em', margin: 0 }}>
+            <motion.h1
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              transition={{ duration: 1.0, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: 'clamp(3.8rem, 10vw, 9.5rem)',
+                lineHeight: 0.92,
+                fontWeight: 300,
+                fontStyle: 'italic',
+                color: 'var(--cg-primary, #8B7355)',
+                letterSpacing: '-0.025em',
+                margin: 0,
+              }}
+            >
               {hl2.content}
             </motion.h1>
           </div>
         </div>
 
-        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
-          style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <p style={{ fontSize: '14px', lineHeight: 1.65, color: 'var(--cg-text, #2C2C2C)', opacity: 0.65, fontFamily: 'var(--font-body)', margin: 0 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+        >
+          <p style={{
+            fontSize: '14px',
+            lineHeight: 1.65,
+            color: 'var(--cg-text, #2C2C2C)',
+            opacity: 0.65,
+            fontFamily: 'var(--font-body)',
+            margin: 0,
+          }}>
             {subtitle.content}
           </p>
-          <Link href="{bookingIntegration.booking_enabled ? bookingIntegration.booking_url : \'#classes\'}" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px 20px', backgroundColor: 'var(--cg-primary, #8B7355)', color: '#fff', borderRadius: '4px', fontSize: '11.5px', fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', textDecoration: 'none', fontFamily: 'var(--font-body)', width: 'fit-content' }}>
+
+          <Link
+            href={bookingHref}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '12px 20px',
+              backgroundColor: 'var(--cg-primary, #8B7355)',
+              color: '#fff',
+              borderRadius: '4px',
+              fontSize: '11.5px',
+              fontWeight: 500,
+              letterSpacing: '0.07em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              fontFamily: 'var(--font-body)',
+              width: 'fit-content',
+            }}
+          >
             {cta1.content} <ArrowRight size={13} />
           </Link>
-          <Link href="{bookingIntegration.booking_enabled ? bookingIntegration.booking_url : \'#classes\'}" style={{ fontSize: '12px', color: 'var(--cg-text, #2C2C2C)', opacity: 0.5, textDecoration: 'underline', textUnderlineOffset: '4px', fontFamily: 'var(--font-body)', width: 'fit-content' }}>
+
+          <Link
+            href={bookingHref}
+            style={{
+              fontSize: '12px',
+              color: 'var(--cg-text, #2C2C2C)',
+              opacity: 0.5,
+              textDecoration: 'underline',
+              textUnderlineOffset: '4px',
+              fontFamily: 'var(--font-body)',
+              width: 'fit-content',
+            }}
+          >
             {cta2.content}
           </Link>
         </motion.div>
       </div>
 
-      {/* ── Masonry image grid ─────────────────────────────────────────── */}
-      <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        style={{ flex: 1, display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.85fr', gap: '10px', paddingLeft: '6vw', paddingRight: '6vw', paddingBottom: '6vh', minHeight: '46vh', maxHeight: '52vh' }}>
+      {/* ── Ambient video slideshow ───────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.1, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          flex: 1,
+          paddingLeft: '6vw',
+          paddingRight: '6vw',
+          paddingBottom: '6vh',
+          minHeight: '46vh',
+          maxHeight: '52vh',
+          position: 'relative',
+        }}
+      >
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          borderRadius: '14px',
+          overflow: 'hidden',
+        }}>
 
-        {/* Card 1 — tall portrait */}
-        <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '14px' }}>
-          <img src={img1} alt="Yoga practice" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
-        </div>
+          {/* Slot A */}
+          <video
+            ref={refA}
+            src={WELLNESS_VIDEOS[0]}
+            muted
+            playsInline
+            preload="auto"
+            onEnded={() => handleVideoEnd('a')}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: activeSlot === 'a' ? 1 : 0,
+              transition: `opacity ${FADE_MS}ms ease`,
+              transform: 'scale(1.04)',
+              transformOrigin: 'center',
+            }}
+          />
 
-        {/* Card 2 — middle with stats pill */}
-        <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '14px' }}>
-          <img src={img2} alt="Studio ambiance" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          <div style={{ position: 'absolute', bottom: '14px', left: '14px', right: '14px', background: 'rgba(250,249,246,0.90)', backdropFilter: 'blur(14px)', borderRadius: '999px', padding: '9px 16px', display: 'flex', gap: '16px', alignItems: 'center', fontSize: '12px', fontFamily: 'var(--font-body)' }}>
+          {/* Slot B */}
+          <video
+            ref={refB}
+            src={WELLNESS_VIDEOS[1]}
+            muted
+            playsInline
+            preload="auto"
+            onEnded={() => handleVideoEnd('b')}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: activeSlot === 'b' ? 1 : 0,
+              transition: `opacity ${FADE_MS}ms ease`,
+              transform: 'scale(1.04)',
+              transformOrigin: 'center',
+            }}
+          />
+
+          {/* Vignette — preserves light wellness palette */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to bottom, rgba(250,249,246,0.06) 0%, rgba(0,0,0,0.22) 100%)',
+            pointerEvents: 'none',
+          }} />
+
+          {/* Floating stats pill */}
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '20px',
+            background: 'rgba(250,249,246,0.88)',
+            backdropFilter: 'blur(16px)',
+            borderRadius: '999px',
+            padding: '9px 20px',
+            display: 'flex',
+            gap: '20px',
+            alignItems: 'center',
+            fontSize: '12px',
+            fontFamily: 'var(--font-body)',
+          }}>
             <span style={{ color: 'var(--cg-primary, #8B7355)', fontWeight: 600 }}>★ 4.9</span>
             <span style={{ color: 'var(--cg-text, #2C2C2C)', opacity: 0.65 }}>2,400+ members</span>
-            <span style={{ color: 'var(--cg-text, #2C2C2C)', opacity: 0.55, marginLeft: 'auto' }}>12 classes/wk</span>
+            <span style={{ color: 'var(--cg-text, #2C2C2C)', opacity: 0.55 }}>12 classes/wk</span>
           </div>
-        </div>
 
-        {/* Card 3 — image top + colored promo card bottom */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div style={{ flex: 1, position: 'relative', overflow: 'hidden', borderRadius: '14px', minHeight: 0 }}>
-            <img src={img3} alt="Mindful movement" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          </div>
-          <div style={{ background: 'var(--cg-primary, #8B7355)', borderRadius: '14px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexShrink: 0, height: '120px' }}>
+          {/* First class free — promo tag */}
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            right: '20px',
+            background: 'var(--cg-primary, #8B7355)',
+            borderRadius: '10px',
+            padding: '14px 20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '2px',
+          }}>
             <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'var(--font-body)', margin: 0 }}>First class</p>
-            <p style={{ color: '#fff', fontSize: '22px', fontWeight: 300, fontStyle: 'italic', lineHeight: 1.15, fontFamily: 'var(--font-heading)', margin: 0 }}>Always free.</p>
+            <p style={{ color: '#fff', fontSize: '20px', fontWeight: 300, fontStyle: 'italic', lineHeight: 1.2, fontFamily: 'var(--font-heading)', margin: 0 }}>Always free.</p>
           </div>
-        </div>
 
+        </div>
       </motion.div>
     </section>
   );
