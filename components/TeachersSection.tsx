@@ -1,11 +1,45 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Reveal } from '@/components/Reveal';
 import { instructors } from '@/lib/site-data';
+import { useSiteData } from '@/components/SiteDataProvider';
 import { Instagram } from 'lucide-react';
-import Image from 'next/image';
+import type { FeaturedTeacher, SiteContent } from '@/types/site-content';
+
+function toFeaturedTeacher(i: (typeof instructors)[0]): FeaturedTeacher {
+  return {
+    id: i.name,
+    name: i.name,
+    role: i.role,
+    specialty: i.specialty,
+    years: i.years,
+    bio: i.bio,
+    image_url: i.image,
+    instagram_url: i.instagram,
+  };
+}
+
+const fallback: FeaturedTeacher[] = instructors.map(toFeaturedTeacher);
 
 export function TeachersSection() {
+  const siteData = useSiteData();
+
+  const initial: FeaturedTeacher[] = siteData?.site_content?.featured_teachers?.length
+    ? siteData.site_content.featured_teachers
+    : fallback;
+
+  const [teachers, setTeachers] = useState<FeaturedTeacher[]>(initial);
+
+  useEffect(() => {
+    function handler(e: Event) {
+      const content = (e as CustomEvent<SiteContent>).detail;
+      if (content.featured_teachers?.length) setTeachers(content.featured_teachers);
+    }
+    window.addEventListener('koriva:content', handler);
+    return () => window.removeEventListener('koriva:content', handler);
+  }, []);
+
   return (
     <section id="teachers" className="section-padding" style={{ backgroundColor: 'var(--bg-cream)' }}>
       <div className="container-tight">
@@ -35,49 +69,62 @@ export function TeachersSection() {
 
         {/* Instructors grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {instructors.map((instructor, i) => (
-            <Reveal key={instructor.name} delay={0.1 * i}>
+          {teachers.slice(0, 6).map((t, i) => (
+            <Reveal key={t.id} delay={0.1 * i}>
               <div className="group">
                 {/* Photo — grayscale by default, color on hover */}
                 <div className="relative overflow-hidden aspect-[3/4] mb-6">
-                  <Image
-                    src={instructor.image}
-                    alt={instructor.name}
-                    fill
-                    className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 33vw"
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={t.image_url}
+                    alt={t.name}
+                    className="absolute inset-0 h-full w-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-105"
                   />
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                   {/* Years badge */}
-                  <div
-                    className="absolute top-4 right-4 text-white text-xs tracking-widest uppercase font-body opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{ background: 'var(--primary)', padding: '0.4rem 0.8rem' }}
-                  >
-                    {instructor.years} yrs
-                  </div>
+                  {t.years && (
+                    <div
+                      className="absolute top-4 right-4 text-white text-xs tracking-widest uppercase font-body opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{ background: 'var(--primary)', padding: '0.4rem 0.8rem' }}
+                    >
+                      {t.years} yrs
+                    </div>
+                  )}
 
                   {/* Instagram hover */}
-                  <a
-                    href={instructor.instagram}
-                    className="absolute bottom-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  >
-                    <Instagram size={18} />
-                  </a>
+                  {t.instagram_url && (
+                    <a
+                      href={t.instagram_url}
+                      className="absolute bottom-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      aria-label={`${t.name} on Instagram`}
+                    >
+                      <Instagram size={18} />
+                    </a>
+                  )}
                 </div>
 
                 {/* Info */}
                 <div>
-                  <p className="eyebrow mb-2">{instructor.specialty}</p>
+                  <p className="eyebrow mb-2">{t.specialty}</p>
                   <h3
                     className="font-heading text-ink mb-1"
                     style={{ fontSize: '1.9rem' }}
                   >
-                    {instructor.name}
+                    {t.name}
                   </h3>
-                  <p className="font-body text-muted text-sm mb-4">{instructor.role}</p>
-                  <p className="font-body text-muted text-sm leading-relaxed">{instructor.bio}</p>
+                  <p className="font-body text-muted text-sm mb-4">{t.role}</p>
+                  <p className="font-body text-muted text-sm leading-relaxed">{t.bio}</p>
+                  {t.instructor_slug && (
+                    <a
+                      href={`#appointment?instructor=${t.instructor_slug}`}
+                      className="inline-flex items-center gap-1 mt-4 text-xs tracking-widest uppercase font-body transition-opacity hover:opacity-70"
+                      style={{ color: 'var(--primary)' }}
+                    >
+                      Book with {t.name.split(' ')[0]} →
+                    </a>
+                  )}
                 </div>
               </div>
             </Reveal>

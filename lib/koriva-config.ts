@@ -2,6 +2,7 @@
 // Fetches live configuration from the Koriva Admin Portal at runtime (ISR 60s).
 // Returns null gracefully — all components fall back to static site-data.ts defaults.
 
+import type { SiteContent } from "@/types/site-content";
 
 export interface GymInfo {
   name: string;
@@ -12,22 +13,34 @@ export interface GymInfo {
   hours?: Record<string, string>;
   instagram?: string;
   facebook?: string;
+  // Integration flags
+  booking_enabled?: boolean;
+  portal_enabled?: boolean;
+  announcement_enabled?: boolean;
+  announcement_text?: string;
+  announcement_url?: string;
+  announcement_bg_color?: string;
+  announcement_text_color?: string;
+  portal_url?: string;
+  base_url?: string;
 }
 
 export interface BrandConfig {
   tagline?: string;
   hero_headline?: string;
   hero_cta_text?: string;
-  color_primary?: string;   // 6-char hex WITHOUT #
+  color_primary?: string; // 6-char hex WITHOUT #
   color_bg?: string;
   color_text?: string;
-  color_radius?: string;    // '0' | '4' | '8' | '12' | '999'
-  color_mode?: 'light' | 'dark';
+  color_radius?: string; // '0' | '4' | '8' | '12' | '999'
+  color_mode?: "light" | "dark";
   widgets_schedule?: boolean;
   widgets_pricing?: boolean;
   widgets_lead_capture?: boolean;
   widgets_ai_chat?: boolean;
   logo_url?: string | null;
+  hero_url?: string | null;
+  hero_type?: "gradient" | "image" | "video";
   instagram_url?: string | null;
   facebook_url?: string | null;
 }
@@ -36,6 +49,8 @@ export interface KorivaConfig {
   gym: GymInfo;
   template: string;
   brand: BrandConfig;
+  canvas_data?: Record<string, Record<string, unknown>>;
+  site_content?: SiteContent;
   seo: {
     title?: string;
     description?: string;
