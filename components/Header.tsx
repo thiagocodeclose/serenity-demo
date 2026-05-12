@@ -115,7 +115,11 @@ export function Header() {
           {/* CTA */}
           <div className="hidden md:block">
             <Link
-              href={integrations.booking_enabled ? integrations.booking_url : '#pricing'}
+              href={
+                integrations.booking_enabled
+                  ? integrations.booking_url
+                  : "#pricing"
+              }
               className="font-body text-xs tracking-widest uppercase px-6 py-3 transition-all duration-300"
               style={{
                 border: scrolled
@@ -172,7 +176,11 @@ export function Header() {
               </Link>
             ))}
             <Link
-              href={integrations.booking_enabled ? integrations.booking_url : '#pricing'}
+              href={
+                integrations.booking_enabled
+                  ? integrations.booking_url
+                  : "#pricing"
+              }
               onClick={() => setMenuOpen(false)}
               className="btn-primary mt-2 text-center"
             >

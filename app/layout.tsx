@@ -5,7 +5,11 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { GlobalWidgets } from "@/components/GlobalWidgets";
 import { JsonLd } from "@/components/JsonLd";
-import { getKorivaConfig, buildCssVars, IS_TEMPLATE_DEMO } from "@/lib/koriva-config";
+import {
+  getKorivaConfig,
+  buildCssVars,
+  IS_TEMPLATE_DEMO,
+} from "@/lib/koriva-config";
 import { SiteDataProvider } from "@/components/SiteDataProvider";
 
 import { KorivaLivePreview } from "@/components/KorivaLivePreview";
@@ -112,9 +116,8 @@ export default async function RootLayout({
 
   // In template-demo mode: preserve gym data (instructors, classes) but strip brand
   // customisations so the template's own design colours/text are shown, not the gym's.
-  const siteConfig = IS_TEMPLATE_DEMO && config
-    ? { ...config, brand: {} }
-    : config;
+  const siteConfig =
+    IS_TEMPLATE_DEMO && config ? { ...config, brand: {} } : config;
   return (
     <html
       lang="en"

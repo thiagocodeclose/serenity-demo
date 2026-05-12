@@ -59,8 +59,9 @@ export interface KorivaConfig {
   };
 }
 
-const KORIVA_API = process.env.NEXT_PUBLIC_CODEGYM_URL || 'https://app.codegyms.com';
-const GYM_SLUG   = process.env.NEXT_PUBLIC_GYM_SLUG;
+const KORIVA_API =
+  process.env.NEXT_PUBLIC_CODEGYM_URL || "https://app.codegyms.com";
+const GYM_SLUG = process.env.NEXT_PUBLIC_GYM_SLUG;
 
 /**
  * When NEXT_PUBLIC_TEMPLATE_DEMO=true the site runs in "template showcase" mode:
@@ -70,7 +71,8 @@ const GYM_SLUG   = process.env.NEXT_PUBLIC_GYM_SLUG;
  *   the template's own design, not a specific gym's palette.
  * Set this on the canonical template-demo Vercel project alongside GYM_SLUG.
  */
-export const IS_TEMPLATE_DEMO = process.env.NEXT_PUBLIC_TEMPLATE_DEMO === 'true';
+export const IS_TEMPLATE_DEMO =
+  process.env.NEXT_PUBLIC_TEMPLATE_DEMO === "true";
 
 /** Cached per request — only one network call per page render. */
 export async function getKorivaConfig(): Promise<KorivaConfig | null> {
@@ -88,14 +90,17 @@ export async function getKorivaConfig(): Promise<KorivaConfig | null> {
 
 /** Build inline CSS variable overrides from brand config for the <html> element.
  *  Returns an empty object in TEMPLATE_DEMO mode so the template's own defaults apply. */
-export function buildCssVars(brand: BrandConfig | undefined): Record<string, string> {
+export function buildCssVars(
+  brand: BrandConfig | undefined,
+): Record<string, string> {
   if (!brand || IS_TEMPLATE_DEMO) return {};
   const vars: Record<string, string> = {};
-  if (brand.color_primary) vars['--cg-primary'] = `#${brand.color_primary}`;
-  if (brand.color_bg)      vars['--cg-bg']      = `#${brand.color_bg}`;
-  if (brand.color_text)    vars['--cg-text']     = `#${brand.color_text}`;
+  if (brand.color_primary) vars["--cg-primary"] = `#${brand.color_primary}`;
+  if (brand.color_bg) vars["--cg-bg"] = `#${brand.color_bg}`;
+  if (brand.color_text) vars["--cg-text"] = `#${brand.color_text}`;
   if (brand.color_radius !== undefined) {
-    vars['--cg-radius'] = brand.color_radius === '999' ? '9999px' : `${brand.color_radius}px`;
+    vars["--cg-radius"] =
+      brand.color_radius === "999" ? "9999px" : `${brand.color_radius}px`;
   }
   return vars;
 }

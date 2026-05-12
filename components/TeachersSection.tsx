@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Reveal } from '@/components/Reveal';
-import { instructors } from '@/lib/site-data';
-import { useSiteData } from '@/components/SiteDataProvider';
-import { Instagram } from 'lucide-react';
-import type { FeaturedTeacher, SiteContent } from '@/types/site-content';
+import { useEffect, useState } from "react";
+import { Reveal } from "@/components/Reveal";
+import { instructors } from "@/lib/site-data";
+import { useSiteData } from "@/components/SiteDataProvider";
+import { Instagram } from "lucide-react";
+import type { FeaturedTeacher, SiteContent } from "@/types/site-content";
 
 function toFeaturedTeacher(i: (typeof instructors)[0]): FeaturedTeacher {
   return {
@@ -25,7 +25,8 @@ const fallback: FeaturedTeacher[] = instructors.map(toFeaturedTeacher);
 export function TeachersSection() {
   const siteData = useSiteData();
 
-  const initial: FeaturedTeacher[] = siteData?.site_content?.featured_teachers?.length
+  const initial: FeaturedTeacher[] = siteData?.site_content?.featured_teachers
+    ?.length
     ? siteData.site_content.featured_teachers
     : fallback;
 
@@ -34,14 +35,19 @@ export function TeachersSection() {
   useEffect(() => {
     function handler(e: Event) {
       const content = (e as CustomEvent<SiteContent>).detail;
-      if (content.featured_teachers?.length) setTeachers(content.featured_teachers);
+      if (content.featured_teachers?.length)
+        setTeachers(content.featured_teachers);
     }
-    window.addEventListener('koriva:content', handler);
-    return () => window.removeEventListener('koriva:content', handler);
+    window.addEventListener("koriva:content", handler);
+    return () => window.removeEventListener("koriva:content", handler);
   }, []);
 
   return (
-    <section id="teachers" className="section-padding" style={{ backgroundColor: 'var(--bg-cream)' }}>
+    <section
+      id="teachers"
+      className="section-padding"
+      style={{ backgroundColor: "var(--bg-cream)" }}
+    >
       <div className="container-tight">
         {/* Header */}
         <div className="mb-16">
@@ -51,7 +57,7 @@ export function TeachersSection() {
           <Reveal delay={0.1}>
             <h2
               className="font-heading text-ink"
-              style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
+              style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
             >
               Meet Your Teachers
             </h2>
@@ -87,7 +93,10 @@ export function TeachersSection() {
                   {t.years && (
                     <div
                       className="absolute top-4 right-4 text-white text-xs tracking-widest uppercase font-body opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      style={{ background: 'var(--primary)', padding: '0.4rem 0.8rem' }}
+                      style={{
+                        background: "var(--primary)",
+                        padding: "0.4rem 0.8rem",
+                      }}
                     >
                       {t.years} yrs
                     </div>
@@ -110,19 +119,21 @@ export function TeachersSection() {
                   <p className="eyebrow mb-2">{t.specialty}</p>
                   <h3
                     className="font-heading text-ink mb-1"
-                    style={{ fontSize: '1.9rem' }}
+                    style={{ fontSize: "1.9rem" }}
                   >
                     {t.name}
                   </h3>
                   <p className="font-body text-muted text-sm mb-4">{t.role}</p>
-                  <p className="font-body text-muted text-sm leading-relaxed">{t.bio}</p>
+                  <p className="font-body text-muted text-sm leading-relaxed">
+                    {t.bio}
+                  </p>
                   {t.instructor_slug && (
                     <a
                       href={`#appointment?instructor=${t.instructor_slug}`}
                       className="inline-flex items-center gap-1 mt-4 text-xs tracking-widest uppercase font-body transition-opacity hover:opacity-70"
-                      style={{ color: 'var(--primary)' }}
+                      style={{ color: "var(--primary)" }}
                     >
-                      Book with {t.name.split(' ')[0]} →
+                      Book with {t.name.split(" ")[0]} →
                     </a>
                   )}
                 </div>
