@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
-import { useSiteData } from '@/components/SiteDataProvider';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Menu, X } from "lucide-react";
+import { useSiteData } from "@/components/SiteDataProvider";
 
 const navLinks = [
-  { label: 'Classes', href: '#classes' },
-  { label: 'Teachers', href: '#teachers' },
-  { label: 'Studio', href: '#studio' },
-  { label: 'Pricing', href: '#pricing' },
+  { label: "Classes", href: "#classes" },
+  { label: "Teachers", href: "#teachers" },
+  { label: "Studio", href: "#studio" },
+  { label: "Pricing", href: "#pricing" },
 ];
 
 export function Header() {
@@ -23,43 +23,52 @@ export function Header() {
   }>({
     booking_enabled: false,
     portal_enabled: false,
-    booking_url: '#',
-    portal_url: '#',
+    booking_url: "#",
+    portal_url: "#",
   });
   const siteData = useSiteData();
-  const gymName = siteData?.gym?.name?.toUpperCase() || 'SERENITY WELLNESS';
+  const gymName = siteData?.gym?.name?.toUpperCase() || "SERENITY WELLNESS";
   const logoUrl = siteData?.brand?.logo_url;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
     function handleBrand(e: Event) {
       const d = (e as CustomEvent).detail as Record<string, unknown>;
-      if (d.booking_enabled !== undefined || d.portal_enabled !== undefined || d.gym_slug !== undefined) {
-        const slug = (d.gym_slug as string) || '';
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.codegyms.com';
+      if (
+        d.booking_enabled !== undefined ||
+        d.portal_enabled !== undefined ||
+        d.gym_slug !== undefined
+      ) {
+        const slug = (d.gym_slug as string) || "";
+        const baseUrl =
+          process.env.NEXT_PUBLIC_APP_URL || "https://app.codegyms.com";
         setIntegrations({
-          booking_enabled: !!(d.booking_enabled),
-          portal_enabled: !!(d.portal_enabled),
-          booking_url: slug ? `${baseUrl}/schedule/${slug}` : '#',
-          portal_url: (d.portal_url as string) || (slug ? `${baseUrl}/member-login/${slug}` : '#'),
+          booking_enabled: !!d.booking_enabled,
+          portal_enabled: !!d.portal_enabled,
+          booking_url: slug ? `${baseUrl}/schedule/${slug}` : "#",
+          portal_url:
+            (d.portal_url as string) ||
+            (slug ? `${baseUrl}/member-login/${slug}` : "#"),
         });
       }
     }
-    window.addEventListener('koriva:brand', handleBrand);
-    return () => window.removeEventListener('koriva:brand', handleBrand);
+    window.addEventListener("koriva:brand", handleBrand);
+    return () => window.removeEventListener("koriva:brand", handleBrand);
   }, []);
   return (
     <header
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       style={{
-        backgroundColor: scrolled ? 'var(--bg)' : 'transparent',
-        borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
+        backgroundColor: scrolled ? "var(--bg)" : "transparent",
+        borderBottom: scrolled
+          ? "1px solid var(--border)"
+          : "1px solid transparent",
+        backdropFilter: scrolled ? "blur(12px)" : "none",
       }}
     >
       <div className="container-wide">
@@ -67,13 +76,17 @@ export function Header() {
           {/* Logo */}
           <Link href="/">
             {logoUrl ? (
-              <img src={logoUrl} alt={gymName} className="h-8 w-auto object-contain" />
+              <img
+                src={logoUrl}
+                alt={gymName}
+                className="h-8 w-auto object-contain"
+              />
             ) : (
               <span
                 className="font-heading tracking-wider transition-colors duration-300"
                 style={{
-                  fontSize: '1.35rem',
-                  color: scrolled ? 'var(--ink)' : 'white',
+                  fontSize: "1.35rem",
+                  color: scrolled ? "var(--ink)" : "white",
                 }}
               >
                 {gymName}
@@ -88,7 +101,11 @@ export function Header() {
                 key={link.label}
                 href={link.href}
                 className="font-body text-sm tracking-widest uppercase transition-colors duration-300 hover:opacity-70"
-                style={{ color: scrolled ? 'var(--text-muted)' : 'rgba(255,255,255,0.75)' }}
+                style={{
+                  color: scrolled
+                    ? "var(--text-muted)"
+                    : "rgba(255,255,255,0.75)",
+                }}
               >
                 {link.label}
               </Link>
@@ -98,11 +115,13 @@ export function Header() {
           {/* CTA */}
           <div className="hidden md:block">
             <Link
-              href="{integrations.booking_enabled ? integrations.booking_url : \'#pricing\'}"
+              href={integrations.booking_enabled ? integrations.booking_url : '#pricing'}
               className="font-body text-xs tracking-widest uppercase px-6 py-3 transition-all duration-300"
               style={{
-                border: scrolled ? '1px solid var(--primary)' : '1px solid rgba(255,255,255,0.5)',
-                color: scrolled ? 'var(--primary)' : 'white',
+                border: scrolled
+                  ? "1px solid var(--primary)"
+                  : "1px solid rgba(255,255,255,0.5)",
+                color: scrolled ? "var(--primary)" : "white",
               }}
             >
               Book Free Class
@@ -111,7 +130,11 @@ export function Header() {
               <a
                 href={integrations.portal_url}
                 className="font-body text-xs tracking-widest uppercase transition-colors"
-                style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', padding: '0.5rem 0.75rem' }}
+                style={{
+                  color: "rgba(255,255,255,0.6)",
+                  textDecoration: "none",
+                  padding: "0.5rem 0.75rem",
+                }}
               >
                 Member Login
               </a>
@@ -121,9 +144,9 @@ export function Header() {
           {/* Mobile menu button */}
           <button
             className="md:hidden transition-colors"
-            style={{ color: scrolled ? 'var(--ink)' : 'white' }}
+            style={{ color: scrolled ? "var(--ink)" : "white" }}
             onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
           >
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -134,7 +157,7 @@ export function Header() {
       {menuOpen && (
         <div
           className="md:hidden border-t"
-          style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)' }}
+          style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}
         >
           <div className="container-wide py-6 flex flex-col gap-5">
             {navLinks.map((link) => (
@@ -143,13 +166,13 @@ export function Header() {
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
                 className="font-body text-sm tracking-widest uppercase"
-                style={{ color: 'var(--text-muted)' }}
+                style={{ color: "var(--text-muted)" }}
               >
                 {link.label}
               </Link>
             ))}
             <Link
-              href="{integrations.booking_enabled ? integrations.booking_url : \'#pricing\'}"
+              href={integrations.booking_enabled ? integrations.booking_url : '#pricing'}
               onClick={() => setMenuOpen(false)}
               className="btn-primary mt-2 text-center"
             >
