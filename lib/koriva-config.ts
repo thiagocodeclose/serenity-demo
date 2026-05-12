@@ -62,6 +62,16 @@ export interface KorivaConfig {
 const KORIVA_API = process.env.NEXT_PUBLIC_CODEGYM_URL || 'https://app.codegyms.com';
 const GYM_SLUG   = process.env.NEXT_PUBLIC_GYM_SLUG;
 
+/**
+ * When NEXT_PUBLIC_TEMPLATE_DEMO=true the site runs in "template showcase" mode:
+ * - Real gym data (instructors, classes, etc.) is loaded from the DB so the template
+ *   shows genuine content instead of static fallbacks.
+ * - Brand customisations (colors, tagline, hero text) are IGNORED so visitors see
+ *   the template's own design, not a specific gym's palette.
+ * Set this on the canonical template-demo Vercel project alongside GYM_SLUG.
+ */
+export const IS_TEMPLATE_DEMO = process.env.NEXT_PUBLIC_TEMPLATE_DEMO === 'true';
+
 /** Cached per request — only one network call per page render. */
 export async function getKorivaConfig(): Promise<KorivaConfig | null> {
   if (!GYM_SLUG) return null;
@@ -76,9 +86,10 @@ export async function getKorivaConfig(): Promise<KorivaConfig | null> {
   }
 }
 
-/** Build inline CSS variable overrides from brand config for the <html> element. */
+/** Build inline CSS variable overrides from brand config for the <html> element.
+ *  Returns an empty object in TEMPLATE_DEMO mode so the template's own defaults apply. */
 export function buildCssVars(brand: BrandConfig | undefined): Record<string, string> {
-  if (!brand) return {};
+  if (!brand || IS_TEMPLATE_DEMO) return {};
   const vars: Record<string, string> = {};
   if (brand.color_primary) vars['--cg-primary'] = `#${brand.color_primary}`;
   if (brand.color_bg)      vars['--cg-bg']      = `#${brand.color_bg}`;

@@ -5,7 +5,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { GlobalWidgets } from "@/components/GlobalWidgets";
 import { JsonLd } from "@/components/JsonLd";
-import { getKorivaConfig, buildCssVars } from "@/lib/koriva-config";
+import { getKorivaConfig, buildCssVars, IS_TEMPLATE_DEMO } from "@/lib/koriva-config";
 import { SiteDataProvider } from "@/components/SiteDataProvider";
 
 import { KorivaLivePreview } from "@/components/KorivaLivePreview";
@@ -108,7 +108,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const config = await getKorivaConfig();
-  const cssVars = buildCssVars(config?.brand);
+  const cssVars = buildCssVars(config?.brand); // returns {} in TEMPLATE_DEMO mode
+
+  // In template-demo mode: preserve gym data (instructors, classes) but strip brand
+  // customisations so the template's own design colours/text are shown, not the gym's.
+  const siteConfig = IS_TEMPLATE_DEMO && config
+    ? { ...config, brand: {} }
+    : config;
   return (
     <html
       lang="en"
@@ -120,7 +126,7 @@ export default async function RootLayout({
       </head>
       <body>
         <KorivaLivePreview />
-        <SiteDataProvider config={config}>
+        <SiteDataProvider config={siteConfig}>
           <Header />
           <main id="main-content">{children}</main>
           <Footer />
