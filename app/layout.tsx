@@ -9,6 +9,7 @@ import { getKorivaConfig, buildCssVars } from "@/lib/koriva-config";
 import { SiteDataProvider } from "@/components/SiteDataProvider";
 
 import { KorivaLivePreview } from "@/components/KorivaLivePreview";
+import { AIChatWidget } from "@/components/AIChatWidget";
 const heading = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -124,6 +125,7 @@ export default async function RootLayout({
           <main id="main-content">{children}</main>
           <Footer />
           <GlobalWidgets />
+          <AIChatWidget />
         </SiteDataProvider>
       </body>
     </html>

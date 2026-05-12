@@ -1,6 +1,7 @@
 import { HeroSection } from '@/components/HeroSection';
 import { PhilosophyBar } from '@/components/PhilosophyBar';
 import { ClassesSection } from '@/components/ClassesSection';
+import { PromoBannersSection } from '@/components/PromoBannersSection';
 import { ManifestoSection } from '@/components/ManifestoSection';
 import { TeachersSection } from '@/components/TeachersSection';
 import { GallerySection } from '@/components/GallerySection';
@@ -15,6 +16,7 @@ export default function HomePage() {
       <HeroSection />
       <PhilosophyBar />
       <ClassesSection />
+      <PromoBannersSection />
       <ManifestoSection />
       <TeachersSection />
       <GallerySection />
