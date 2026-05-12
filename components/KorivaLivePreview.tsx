@@ -607,9 +607,19 @@ export function KorivaLivePreview() {
       const id = el.getAttribute("data-cg-el")!;
       // Report every click to the admin — admin decides if it's a single or double click
       // Also report computed color so admin swatch stays in sync
+      // Also report element rect so admin can position the floating edit panel
       const computedColor = getComputedStyle(el).color;
+      const domRect = el.getBoundingClientRect();
+      const elRect = {
+        top: domRect.top,
+        left: domRect.left,
+        width: domRect.width,
+        height: domRect.height,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+      };
       refreshOverlay(id);
-      window.parent.postMessage({ type: "KORIVA_ELEMENT_CLICK", payload: { id, computedColor } }, "*");
+      window.parent.postMessage({ type: "KORIVA_ELEMENT_CLICK", payload: { id, computedColor, rect: elRect } }, "*");
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
