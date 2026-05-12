@@ -392,8 +392,11 @@ export function KorivaLivePreview() {
             }
           }
         }
-        if (color !== undefined)
+        if (color !== undefined) {
           root.style.setProperty(`--cg-el-${id}-color`, `#${color}`);
+          // Also apply directly so elements with hardcoded inline styles update immediately
+          if (cgEl) (cgEl as HTMLElement).style.color = `#${color}`;
+        }
         if (textAlign !== undefined)
           root.style.setProperty(`--cg-el-${id}-align`, textAlign);
         if (visible !== undefined)
@@ -559,8 +562,10 @@ export function KorivaLivePreview() {
 
       const id = el.getAttribute("data-cg-el")!;
       // Report every click to the admin — admin decides if it's a single or double click
+      // Also report computed color so admin swatch stays in sync
+      const computedColor = getComputedStyle(el).color;
       refreshOverlay(id);
-      window.parent.postMessage({ type: "KORIVA_ELEMENT_CLICK", payload: { id } }, "*");
+      window.parent.postMessage({ type: "KORIVA_ELEMENT_CLICK", payload: { id, computedColor } }, "*");
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
