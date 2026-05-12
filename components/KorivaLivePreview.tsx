@@ -528,70 +528,39 @@ export function KorivaLivePreview() {
     setEditingId(null);
   }, [editingId]);
 
-  // ── Click-to-select + double-click to edit ───────────────────────────────
+  // ── Click-to-select — admin owns double-click detection ──────────────────
+  // The admin (website/page.tsx) tracks two rapid clicks on the same element
+  // and sends KORIVA_INLINE_EDIT_REQUEST when it detects a double-click.
+  // Templates just report clicks immediately — no timer needed here.
 
   useEffect(() => {
     if (!editMode) return;
 
     const onClick = (e: MouseEvent) => {
-      // If clicking outside any element while editing → stop editing
+      // While editing: click outside → stop; click inside → let contenteditable handle
       if (editingId) {
-        const el = (e.target as HTMLElement).closest(
-          "[data-cg-el]",
-        ) as HTMLElement | null;
+        const el = (e.target as HTMLElement).closest("[data-cg-el]") as HTMLElement | null;
         if (!el || el.getAttribute("data-cg-el") !== editingId) {
           stopEditing();
-          return;
         }
-        return; // let contenteditable handle it
-      }
-
-      const el = (e.target as HTMLElement).closest(
-        "[data-cg-el]",
-      ) as HTMLElement | null;
-      if (!el) {
-        setOverlay(null);
-        window.parent.postMessage(
-          { type: "KORIVA_ELEMENT_CLICK", payload: { id: null } },
-          "*",
-        );
         return;
       }
-      e.preventDefault();
-      e.stopPropagation();
-      const id = el.getAttribute("data-cg-el")!;
-      refreshOverlay(id);
-      window.parent.postMessage(
-        { type: "KORIVA_ELEMENT_CLICK", payload: { id } },
-        "*",
-      );
-    };
 
-    const onDblClick = (e: MouseEvent) => {
-      const el = (e.target as HTMLElement).closest(
-        "[data-cg-el]",
-      ) as HTMLElement | null;
-      if (!el) return;
-      const id = el.getAttribute("data-cg-el")!;
-      // Only allow inline editing for text elements (not images)
-      const isImage = el.querySelector("img") !== null || el.tagName === "IMG";
-      if (isImage) return;
+      const el = (e.target as HTMLElement).closest("[data-cg-el]") as HTMLElement | null;
+
+      if (!el) {
+        setOverlay(null);
+        window.parent.postMessage({ type: "KORIVA_ELEMENT_CLICK", payload: { id: null } }, "*");
+        return;
+      }
+
       e.preventDefault();
       e.stopPropagation();
-      // Stop any previous editing
-      if (editingId && editingId !== id) stopEditing();
-      setEditingId(id);
-      el.contentEditable = "true";
-      el.style.outline = "2px solid #3b82f6";
-      el.style.cursor = "text";
-      el.focus();
-      // Select all text
-      const range = document.createRange();
-      range.selectNodeContents(el);
-      const sel = window.getSelection();
-      sel?.removeAllRanges();
-      sel?.addRange(range);
-      setOverlay(null); // hide selection overlay while editing
+
+      const id = el.getAttribute("data-cg-el")!;
+      // Report every click to the admin — admin decides if it's a single or double click
+      refreshOverlay(id);
+      window.parent.postMessage({ type: "KORIVA_ELEMENT_CLICK", payload: { id } }, "*");
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -615,11 +584,9 @@ export function KorivaLivePreview() {
     `;
     document.head.appendChild(style);
     document.addEventListener("click", onClick, true);
-    document.addEventListener("dblclick", onDblClick, true);
     document.addEventListener("keydown", onKeyDown, true);
     return () => {
       document.removeEventListener("click", onClick, true);
-      document.removeEventListener("dblclick", onDblClick, true);
       document.removeEventListener("keydown", onKeyDown, true);
       document.getElementById("cg-edit-style")?.remove();
     };
