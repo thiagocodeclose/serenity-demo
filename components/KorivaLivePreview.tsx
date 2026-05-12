@@ -250,34 +250,78 @@ export function KorivaLivePreview() {
           requestAnimationFrame(() =>
             requestAnimationFrame(() => {
               const registry = window.__KORIVA_REGISTRY__;
-              if (!registry) return;
-              const elements = Array.from(registry.entries()).map(
-                ([id, data]) => ({
-                  id,
-                  section: data.meta?.section ?? id.split("_")[0],
-                  label:
-                    data.meta?.label ??
-                    id.replace(/^[^_]+_/, "").replace(/_/g, " "),
-                  type: data.meta?.type ?? "text",
-                  defaults: data.defaults,
-                }),
-              );
-              const templateId =
-                document.documentElement.dataset.templateId ?? "unknown";
-              const templateVersion =
-                document.documentElement.dataset.templateVersion ?? "1";
+              const elementsMap = new Map<string, {
+                id: string; section: string; label: string;
+                type: string; defaults?: Record<string, unknown>; content?: string;
+              }>();
+
+              // 1. From __KORIVA_REGISTRY__ (useKorivaElement hooks)
+              if (registry) {
+                Array.from(registry.entries()).forEach(([id, data]) => {
+                  const domEl = document.querySelector(`[data-cg-el="${id}"]`) as HTMLElement | null;
+                  const isImage = domEl?.tagName === "IMG" || !!domEl?.querySelector("img");
+                  const currentContent = !isImage && domEl ? domEl.innerText?.trim() || undefined : undefined;
+                  elementsMap.set(id, {
+                    id,
+                    section: data.meta?.section ?? id.split("_")[0],
+                    label: data.meta?.label ?? id.replace(/^[^_]+_/, "").replace(/_/g, " "),
+                    type: data.meta?.type ?? "text",
+                    defaults: data.defaults,
+                    content: currentContent,
+                  });
+                });
+              }
+
+              // 2. Scan DOM for [data-cg-el] elements not already in registry
+              document.querySelectorAll("[data-cg-el]").forEach((domEl) => {
+                const id = domEl.getAttribute("data-cg-el");
+                if (!id || elementsMap.has(id)) return;
+                const el = domEl as HTMLElement;
+                const isImage = el.tagName === "IMG" || !!el.querySelector("img");
+                const type = isImage ? "image" : el.tagName === "A" || el.getAttribute("role") === "button" ? "button" : "text";
+                const currentContent = !isImage ? el.innerText?.trim() || undefined : undefined;
+                const section = id.split("_")[0];
+                const label = id.replace(/^[^_]+_/, "").replace(/_/g, " ");
+                elementsMap.set(id, { id, section, label: label.charAt(0).toUpperCase() + label.slice(1), type, content: currentContent });
+              });
+
+              const elements = Array.from(elementsMap.values());
+              const templateId = document.documentElement.dataset.templateId ?? "unknown";
+              const templateVersion = document.documentElement.dataset.templateVersion ?? "1";
               window.parent?.postMessage(
-                {
-                  type: "KORIVA_MANIFEST",
-                  templateId,
-                  templateVersion,
-                  elements,
-                },
+                { type: "KORIVA_MANIFEST", templateId, templateVersion, elements },
                 "*",
               );
             }),
           );
         }
+        return;
+      }
+
+      if (e.data.type === "KORIVA_INLINE_EDIT_REQUEST") {
+        // Admin detected double-click — activate inline editing for this element
+        const id = e.data.payload?.id as string | undefined;
+        if (!id) return;
+        setEditMode(true);
+        requestAnimationFrame(() => {
+          const cgEl = document.querySelector(`[data-cg-el="${id}"]`) as HTMLElement | null;
+          if (!cgEl) return;
+          const isImage = cgEl.querySelector("img") !== null || cgEl.tagName === "IMG";
+          if (isImage) return;
+          setEditingId(id);
+          cgEl.contentEditable = "true";
+          cgEl.style.outline = "2px solid #3b82f6";
+          cgEl.style.cursor = "text";
+          cgEl.focus();
+          const range = document.createRange();
+          range.selectNodeContents(cgEl);
+          const sel = window.getSelection();
+          sel?.removeAllRanges();
+          sel?.addRange(range);
+          setOverlay(null);
+          cgEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          window.parent.postMessage({ type: "KORIVA_INLINE_EDIT_START", payload: { id } }, "*");
+        });
         return;
       }
 

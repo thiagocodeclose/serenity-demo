@@ -1,24 +1,31 @@
 'use client';
 
 import { Reveal } from '@/components/Reveal';
+import { useKorivaElement } from '@/hooks/useKorivaElement';
 import { testimonials } from '@/lib/site-data';
 import Image from 'next/image';
 
 export function TestimonialsSection() {
+  const eyebrow = useKorivaElement('testimonials_eyebrow', { content: 'Stories', visible: true }, { section: 'Testimonials', label: 'Eyebrow', type: 'eyebrow' });
+  const headline = useKorivaElement('testimonials_headline', { content: 'Life Transformed', visible: true }, { section: 'Testimonials', label: 'Headline', type: 'text' });
+  const ctaCopy = useKorivaElement('testimonials_cta_copy', { content: 'Join 2,400+ members transforming their practice', visible: true }, { section: 'Testimonials', label: 'CTA Copy', type: 'text' });
+  const ctaTagline = useKorivaElement('testimonials_cta_tagline', { content: 'Your story starts with one class.', visible: true }, { section: 'Testimonials', label: 'CTA Tagline', type: 'text' });
+
   return (
     <section className="section-padding overflow-hidden" style={{ backgroundColor: 'var(--bg)' }}>
       <div className="container-tight">
         {/* Header */}
         <div className="text-center mb-20">
           <Reveal>
-            <p className="eyebrow mb-4">Stories</p>
+            <p {...eyebrow.editProps} className="eyebrow mb-4">{eyebrow.content}</p>
           </Reveal>
           <Reveal delay={0.1}>
             <h2
+              {...headline.editProps}
               className="font-heading text-ink"
               style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
             >
-              Life Transformed
+              {headline.content}
             </h2>
           </Reveal>
           <Reveal delay={0.15}>
@@ -79,11 +86,11 @@ export function TestimonialsSection() {
         {/* CTA */}
         <Reveal>
           <div className="border-t border-[var(--border)] pt-14 text-center">
-            <p className="font-body text-muted text-sm mb-2">
-              Join 2,400+ members transforming their practice
+            <p {...ctaCopy.editProps} className="font-body text-muted text-sm mb-2">
+              {ctaCopy.content}
             </p>
-            <p className="font-heading text-ink italic" style={{ fontSize: '2rem' }}>
-              Your story starts with one class.
+            <p {...ctaTagline.editProps} className="font-heading text-ink italic" style={{ fontSize: '2rem' }}>
+              {ctaTagline.content}
             </p>
           </div>
         </Reveal>

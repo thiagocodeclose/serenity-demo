@@ -1,11 +1,15 @@
 'use client';
 
 import { Reveal } from '@/components/Reveal';
+import { useKorivaElement } from '@/hooks/useKorivaElement';
 import { koriva } from '@/lib/site-data';
 import { useEffect, useRef, useState } from 'react';
 
 export function PricingSection() {
   const [iframeHeight, setIframeHeight] = useState(520);
+  const eyebrow = useKorivaElement('pricing_eyebrow', { content: 'Membership', visible: true }, { section: 'Pricing', label: 'Eyebrow', type: 'eyebrow' });
+  const headline = useKorivaElement('pricing_headline', { content: 'Your Journey Starts Here', visible: true }, { section: 'Pricing', label: 'Headline', type: 'text' });
+  const descEl = useKorivaElement('pricing_description', { content: 'Simple, transparent pricing. No hidden fees. Cancel anytime. Your first class is always complimentary.', visible: true }, { section: 'Pricing', label: 'Description', type: 'text' });
 
   useEffect(() => {
     const handler = (e: MessageEvent) => {
@@ -27,23 +31,23 @@ export function PricingSection() {
         {/* Header */}
         <div className="text-center mb-16">
           <Reveal>
-            <p className="eyebrow mb-4">Membership</p>
+            <p {...eyebrow.editProps} className="eyebrow mb-4">{eyebrow.content}</p>
           </Reveal>
           <Reveal delay={0.1}>
             <h2
+              {...headline.editProps}
               className="font-heading text-ink"
               style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
             >
-              Your Journey Starts Here
+              {headline.content}
             </h2>
           </Reveal>
           <Reveal delay={0.2}>
             <div className="divider" />
           </Reveal>
           <Reveal delay={0.25}>
-            <p className="font-body text-muted max-w-md mx-auto leading-relaxed">
-              Simple, transparent pricing. No hidden fees. Cancel anytime.
-              Your first class is always complimentary.
+            <p {...descEl.editProps} className="font-body text-muted max-w-md mx-auto leading-relaxed">
+              {descEl.content}
             </p>
           </Reveal>
         </div>

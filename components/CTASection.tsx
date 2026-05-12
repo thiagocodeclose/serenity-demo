@@ -1,11 +1,17 @@
 'use client';
 
 import { Reveal } from '@/components/Reveal';
+import { useKorivaElement } from '@/hooks/useKorivaElement';
 import { koriva } from '@/lib/site-data';
 import { useEffect, useRef, useState } from 'react';
 
 export function CTASection() {
   const [iframeHeight, setIframeHeight] = useState(320);
+  const eyebrow = useKorivaElement('cta_eyebrow', { content: 'Start Today', visible: true }, { section: 'CTA', label: 'Eyebrow', type: 'eyebrow' });
+  const headline = useKorivaElement('cta_headline', { content: 'Begin Your Practice', visible: true }, { section: 'CTA', label: 'Headline', type: 'text' });
+  const description = useKorivaElement('cta_description', { content: 'Claim your complimentary first class. No credit card required. One of our team will reach out to welcome you personally.', visible: true }, { section: 'CTA', label: 'Description', type: 'text' });
+  const trustCopy = useKorivaElement('cta_trust_copy', { content: 'No spam. Unsubscribe anytime. We respect your privacy.', visible: true }, { section: 'CTA', label: 'Trust Copy', type: 'text' });
+  const bgImage = useKorivaElement('cta_bg_image', { content: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=70&auto=format&fit=crop', visible: true }, { section: 'CTA', label: 'Background Image', type: 'image' });
 
   useEffect(() => {
     const handler = (e: MessageEvent) => {
@@ -29,10 +35,10 @@ export function CTASection() {
     >
       {/* Background */}
       <div
+        {...bgImage.editProps}
         className="absolute inset-0"
         style={{
-          backgroundImage:
-            'url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=70&auto=format&fit=crop)',
+          backgroundImage: `url(${bgImage.content})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           opacity: 0.12,
@@ -43,14 +49,15 @@ export function CTASection() {
         <div className="container-tight text-center">
           {/* Headline */}
           <Reveal>
-            <p className="eyebrow text-[var(--accent)] mb-6">Start Today</p>
+            <p {...eyebrow.editProps} className="eyebrow text-[var(--accent)] mb-6">{eyebrow.content}</p>
           </Reveal>
           <Reveal delay={0.1}>
             <h2
+              {...headline.editProps}
               className="font-heading text-white mb-6"
               style={{ fontSize: 'clamp(2.5rem, 7vw, 6rem)', lineHeight: 1.0 }}
             >
-              Begin Your <em>Practice</em>
+              {headline.content}
             </h2>
           </Reveal>
           <Reveal delay={0.2}>
@@ -60,9 +67,8 @@ export function CTASection() {
             />
           </Reveal>
           <Reveal delay={0.25}>
-            <p className="font-body text-white/60 max-w-md mx-auto text-base leading-relaxed mb-14">
-              Claim your complimentary first class. No credit card required.
-              One of our team will reach out to welcome you personally.
+            <p {...description.editProps} className="font-body text-white/60 max-w-md mx-auto text-base leading-relaxed mb-14">
+              {description.content}
             </p>
           </Reveal>
 
@@ -82,8 +88,8 @@ export function CTASection() {
 
           {/* Trust micro-copy */}
           <Reveal delay={0.35}>
-            <p className="font-body text-white/30 text-xs mt-8 tracking-wide">
-              No spam. Unsubscribe anytime. We respect your privacy.
+            <p {...trustCopy.editProps} className="font-body text-white/30 text-xs mt-8 tracking-wide">
+              {trustCopy.content}
             </p>
           </Reveal>
         </div>

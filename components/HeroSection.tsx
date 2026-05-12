@@ -153,6 +153,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
+              {...eyebrow.editProps}
               style={{
                 fontSize: "11px",
                 letterSpacing: "0.22em",
@@ -175,6 +176,7 @@ export function HeroSection() {
                 delay: 0.1,
                 ease: [0.16, 1, 0.3, 1],
               }}
+              {...hl1.editProps}
               style={{
                 fontFamily: "var(--font-heading)",
                 fontSize: "clamp(3.8rem, 10vw, 9.5rem)",
@@ -198,6 +200,7 @@ export function HeroSection() {
                 delay: 0.2,
                 ease: [0.16, 1, 0.3, 1],
               }}
+              {...hl2.editProps}
               style={{
                 fontFamily: "var(--font-heading)",
                 fontSize: "clamp(3.8rem, 10vw, 9.5rem)",
@@ -221,6 +224,7 @@ export function HeroSection() {
           style={{ display: "flex", flexDirection: "column", gap: "16px" }}
         >
           <p
+            {...subtitle.editProps}
             style={{
               fontSize: "14px",
               lineHeight: 1.65,
@@ -234,6 +238,7 @@ export function HeroSection() {
           </p>
 
           <Link
+            {...cta1.editProps}
             href={bookingHref}
             style={{
               display: "inline-flex",
@@ -256,6 +261,7 @@ export function HeroSection() {
           </Link>
 
           <Link
+            {...cta2.editProps}
             href={bookingHref}
             style={{
               fontSize: "12px",

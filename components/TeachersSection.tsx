@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Reveal } from "@/components/Reveal";
+import { useKorivaElement } from "@/hooks/useKorivaElement";
 import { instructors } from "@/lib/site-data";
 import { useSiteData } from "@/components/SiteDataProvider";
 import { Instagram } from "lucide-react";
@@ -24,6 +25,9 @@ const fallback: FeaturedTeacher[] = instructors.map(toFeaturedTeacher);
 
 export function TeachersSection() {
   const siteData = useSiteData();
+  const eyebrow = useKorivaElement('teachers_eyebrow', { content: 'The Guides', visible: true }, { section: 'Teachers', label: 'Eyebrow', type: 'eyebrow' });
+  const headline = useKorivaElement('teachers_headline', { content: 'Meet Your Teachers', visible: true }, { section: 'Teachers', label: 'Headline', type: 'text' });
+  const description = useKorivaElement('teachers_description', { content: 'Trained across the globe, our instructors bring depth, warmth, and decades of combined experience to every class.', visible: true }, { section: 'Teachers', label: 'Description', type: 'text' });
 
   const initial: FeaturedTeacher[] = siteData?.site_content?.featured_teachers
     ?.length
@@ -52,23 +56,23 @@ export function TeachersSection() {
         {/* Header */}
         <div className="mb-16">
           <Reveal>
-            <p className="eyebrow mb-4">The Guides</p>
+            <p {...eyebrow.editProps} className="eyebrow mb-4">{eyebrow.content}</p>
           </Reveal>
           <Reveal delay={0.1}>
             <h2
+              {...headline.editProps}
               className="font-heading text-ink"
               style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
             >
-              Meet Your Teachers
+              {headline.content}
             </h2>
           </Reveal>
           <Reveal delay={0.15}>
             <div className="divider divider-left mt-6" />
           </Reveal>
           <Reveal delay={0.2}>
-            <p className="font-body text-muted max-w-md leading-relaxed mt-4">
-              Trained across the globe, our instructors bring depth, warmth, and
-              decades of combined experience to every class.
+            <p {...description.editProps} className="font-body text-muted max-w-md leading-relaxed mt-4">
+              {description.content}
             </p>
           </Reveal>
         </div>
