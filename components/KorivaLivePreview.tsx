@@ -359,21 +359,8 @@ export function KorivaLivePreview() {
         return;
       }
 
-      // Batch update — admin sends all canvas_data in one shot for performance
-      if (e.data.type === "KORIVA_ELEMENT_BATCH") {
-        const batch = e.data.payload as Record<string, KorivaElementPayload>;
-        Object.entries(batch).forEach(([id, payload]) => {
-          window.dispatchEvent(
-            new CustomEvent<KorivaElementPayload>("koriva:element", {
-              detail: { ...payload, id },
-            }),
-          );
-        });
-        return;
-      }
-
-      if (e.data.type === "KORIVA_ELEMENT_UPDATE") {
-        const p = e.data.payload as KorivaElementPayload;
+      // ── applyElementPayload — shared DOM/CSS updater ──
+      function applyElementPayload(p: KorivaElementPayload) {
         const {
           id,
           content,
@@ -409,10 +396,12 @@ export function KorivaLivePreview() {
 
         if (content !== undefined) {
           if (imgEl) {
-            // Image element — update src directly
             imgEl.src = content;
           } else {
             root.style.setProperty(`--cg-el-${id}-content`, content);
+            if (cgEl && !cgEl.querySelector("[data-cg-el]")) {
+              cgEl.textContent = content;
+            }
           }
         }
         if (fontSize !== undefined)
@@ -425,7 +414,6 @@ export function KorivaLivePreview() {
           root.style.setProperty(`--cg-el-${id}-family`, fontFamily);
           if (cgEl) {
             (cgEl as HTMLElement).style.fontFamily = fontFamily;
-            // Inject Google Font if needed
             const linkId = `gf-${fontFamily.replace(/\s/g, "-")}`;
             if (!document.getElementById(linkId)) {
               const link = document.createElement("link");
@@ -438,7 +426,6 @@ export function KorivaLivePreview() {
         }
         if (color !== undefined) {
           root.style.setProperty(`--cg-el-${id}-color`, `#${color}`);
-          // Also apply directly so elements with hardcoded inline styles update immediately
           if (cgEl) (cgEl as HTMLElement).style.color = `#${color}`;
         }
         if (textAlign !== undefined)
@@ -448,7 +435,6 @@ export function KorivaLivePreview() {
             `--cg-el-${id}-display`,
             visible ? "" : "none",
           );
-        // Opacity
         if (opacity !== undefined && cgEl) {
           cgEl.style.opacity = String(opacity / 100);
           root.style.setProperty(
@@ -456,11 +442,9 @@ export function KorivaLivePreview() {
             String(opacity / 100),
           );
         }
-        // Scale (for image resize)
         if (scale !== undefined && cgEl) {
           cgEl.style.scale = String(scale);
         }
-        // Media type toggle: image ↔ video
         if (mediaType !== undefined && cgEl && imgEl) {
           if (mediaType === "video") {
             const src = videoUrl || "";
@@ -485,11 +469,9 @@ export function KorivaLivePreview() {
             if (vid) vid.style.display = "none";
           }
         } else if (videoUrl !== undefined && cgEl) {
-          // Just update video src without toggling
           const vid = cgEl.querySelector("video") as HTMLVideoElement | null;
           if (vid) vid.src = videoUrl;
         }
-        // Apply translate directly to the DOM element for instant feedback
         if (translateX !== undefined || translateY !== undefined) {
           if (cgEl) {
             const cur = (cgEl.style.translate || "0px 0px").split(" ");
@@ -500,22 +482,18 @@ export function KorivaLivePreview() {
             cgEl.style.translate = `${tx}px ${ty}px`;
           }
         }
-        // Focal point — image object-position
         if ((focalX !== undefined || focalY !== undefined) && imgEl) {
           const fx = focalX ?? 50;
           const fy = focalY ?? 50;
           imgEl.style.objectPosition = `${fx}% ${fy}%`;
           root.style.setProperty(`--cg-el-${id}-focal`, `${fx}% ${fy}%`);
         }
-        // Letter-spacing
         if (letterSpacing !== undefined && cgEl) {
           (cgEl as HTMLElement).style.letterSpacing = `${letterSpacing}px`;
         }
-        // Line-height
         if (lineHeight !== undefined && cgEl) {
           (cgEl as HTMLElement).style.lineHeight = String(lineHeight);
         }
-        // Hide on mobile
         if (visibleMobile !== undefined && cgEl) {
           if (visibleMobile === false) {
             cgEl.classList.add('k-hide-mobile');
@@ -523,7 +501,6 @@ export function KorivaLivePreview() {
             cgEl.classList.remove('k-hide-mobile');
           }
         }
-        // Scroll animation
         if (animation !== undefined && cgEl) {
           cgEl.classList.remove('k-anim-fade', 'k-anim-slide-left', 'k-anim-slide-right', 'k-anim-zoom', 'k-anim-slide-up');
           cgEl.classList.remove('k-anim-done');
@@ -540,7 +517,22 @@ export function KorivaLivePreview() {
             detail: p,
           }),
         );
-        if (overlay?.id === id) requestAnimationFrame(() => refreshOverlay(id));
+      }
+
+      // Batch update — admin sends all canvas_data in one shot for performance
+      if (e.data.type === "KORIVA_ELEMENT_BATCH") {
+        const raw = e.data.payload;
+        const entries: KorivaElementPayload[] = Array.isArray(raw)
+          ? raw
+          : Object.values(raw);
+        entries.forEach((payload) => applyElementPayload(payload));
+        return;
+      }
+
+      if (e.data.type === "KORIVA_ELEMENT_UPDATE") {
+        const p = e.data.payload as KorivaElementPayload;
+        applyElementPayload(p);
+        if (overlay?.id === p.id) requestAnimationFrame(() => refreshOverlay(p.id));
         return;
       }
     }
