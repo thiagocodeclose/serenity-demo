@@ -155,7 +155,7 @@ export function HeroSection() {
               transition={{ duration: 0.6 }}
               {...eyebrow.editProps}
               style={{
-                fontSize: "11px",
+                fontSize: eyebrow.fontSize ? `${eyebrow.fontSize}px` : "11px",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "var(--cg-primary, #8B7355)",
@@ -179,9 +179,9 @@ export function HeroSection() {
               {...hl1.editProps}
               style={{
                 fontFamily: "var(--font-heading)",
-                fontSize: "clamp(3.8rem, 10vw, 9.5rem)",
+                fontSize: hl1.fontSize ? `${hl1.fontSize}px` : "clamp(3.8rem, 10vw, 9.5rem)",
                 lineHeight: 0.92,
-                fontWeight: 300,
+                fontWeight: hl1.fontWeight ? Number(hl1.fontWeight) : 300,
                 color: "var(--cg-text, #2C2C2C)",
                 letterSpacing: "-0.025em",
                 margin: 0,
@@ -203,9 +203,9 @@ export function HeroSection() {
               {...hl2.editProps}
               style={{
                 fontFamily: "var(--font-heading)",
-                fontSize: "clamp(3.8rem, 10vw, 9.5rem)",
+                fontSize: hl2.fontSize ? `${hl2.fontSize}px` : "clamp(3.8rem, 10vw, 9.5rem)",
                 lineHeight: 0.92,
-                fontWeight: 300,
+                fontWeight: hl2.fontWeight ? Number(hl2.fontWeight) : 300,
                 fontStyle: "italic",
                 color: "var(--cg-primary, #8B7355)",
                 letterSpacing: "-0.025em",
@@ -226,7 +226,7 @@ export function HeroSection() {
           <p
             {...subtitle.editProps}
             style={{
-              fontSize: "14px",
+              fontSize: subtitle.fontSize ? `${subtitle.fontSize}px` : "14px",
               lineHeight: 1.65,
               color: "var(--cg-text, #2C2C2C)",
               opacity: 0.65,
@@ -248,8 +248,8 @@ export function HeroSection() {
               backgroundColor: "var(--cg-primary, #8B7355)",
               color: "#fff",
               borderRadius: "4px",
-              fontSize: "11.5px",
-              fontWeight: 500,
+              fontSize: cta1.fontSize ? `${cta1.fontSize}px` : "11.5px",
+              fontWeight: cta1.fontWeight ? Number(cta1.fontWeight) : 500,
               letterSpacing: "0.07em",
               textTransform: "uppercase",
               textDecoration: "none",
@@ -264,7 +264,7 @@ export function HeroSection() {
             {...cta2.editProps}
             href={bookingHref}
             style={{
-              fontSize: "12px",
+              fontSize: cta2.fontSize ? `${cta2.fontSize}px` : "12px",
               color: "var(--cg-text, #2C2C2C)",
               opacity: 0.5,
               textDecoration: "underline",
