@@ -41,12 +41,16 @@ export function Header() {
     const gym = siteData?.gym;
     if (!gym) return;
     const slug = gym.slug;
-    const baseUrl = gym.base_url || process.env.NEXT_PUBLIC_APP_URL || "https://app.codegyms.com";
+    const baseUrl =
+      gym.base_url ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      "https://app.codegyms.com";
     setIntegrations({
       booking_enabled: !!gym.booking_enabled,
       portal_enabled: !!gym.portal_enabled,
       booking_url: slug ? `${baseUrl}/schedule/${slug}` : "#",
-      portal_url: gym.portal_url || (slug ? `${baseUrl}/member-login/${slug}` : "#"),
+      portal_url:
+        gym.portal_url || (slug ? `${baseUrl}/member-login/${slug}` : "#"),
     });
   }, [siteData]);
 
@@ -82,7 +86,8 @@ export function Header() {
       className="fixed left-0 right-0 z-50"
       style={{
         top: "var(--bar-h, 0px)",
-        transition: "top 0.2s ease, background-color 0.5s, border-color 0.5s, backdrop-filter 0.5s",
+        transition:
+          "top 0.2s ease, background-color 0.5s, border-color 0.5s, backdrop-filter 0.5s",
         backgroundColor: scrolled ? "var(--bg)" : "transparent",
         borderBottom: scrolled
           ? "1px solid var(--border)"
@@ -143,7 +148,9 @@ export function Header() {
                   border: scrolled
                     ? "1px solid var(--border, rgba(0,0,0,0.15))"
                     : "1px solid rgba(255,255,255,0.28)",
-                  color: scrolled ? "var(--text-muted)" : "rgba(255,255,255,0.75)",
+                  color: scrolled
+                    ? "var(--text-muted)"
+                    : "rgba(255,255,255,0.75)",
                   borderRadius: "var(--radius, 0px)",
                 }}
                 aria-label="Member portal"

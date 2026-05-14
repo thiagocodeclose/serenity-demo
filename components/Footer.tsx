@@ -9,36 +9,54 @@ import { useSiteData } from "@/components/SiteDataProvider";
 // ── Address + hours helpers ──────────────────────────────────────────────────
 function parseGymAddress(ga?: string) {
   if (!ga || !ga.trim()) return null;
-  const parts = ga.split(', ');
-  if (parts.length < 2) return { street: ga, cityLine: '' };
-  return { street: parts[0], cityLine: parts.slice(1).join(', ') };
+  const parts = ga.split(", ");
+  if (parts.length < 2) return { street: ga, cityLine: "" };
+  return { street: parts[0], cityLine: parts.slice(1).join(", ") };
 }
 
 type DayHours = { open: string; close: string; closed: boolean };
 
 function fmt12(t: string): string {
-  const [hStr, mStr] = t.split(':');
+  const [hStr, mStr] = t.split(":");
   const h = parseInt(hStr, 10);
   const m = parseInt(mStr, 10);
-  const p = h < 12 ? 'AM' : 'PM';
+  const p = h < 12 ? "AM" : "PM";
   const h12 = h % 12 || 12;
-  return m === 0 ? `${h12}:00 ${p}` : `${h12}:${String(m).padStart(2, '0')} ${p}`;
+  return m === 0
+    ? `${h12}:00 ${p}`
+    : `${h12}:${String(m).padStart(2, "0")} ${p}`;
 }
 
 function buildHoursDisplay(
-  gymHours: Record<string, DayHours>
+  gymHours: Record<string, DayHours>,
 ): Array<{ label: string; hours: string }> {
-  const DAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+  const DAYS = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
   const SHORT: Record<string, string> = {
-    monday: 'Mon', tuesday: 'Tue', wednesday: 'Wed', thursday: 'Thu',
-    friday: 'Fri', saturday: 'Sat', sunday: 'Sun',
+    monday: "Mon",
+    tuesday: "Tue",
+    wednesday: "Wed",
+    thursday: "Thu",
+    friday: "Fri",
+    saturday: "Sat",
+    sunday: "Sun",
   };
   const result: Array<{ label: string; hours: string }> = [];
   let i = 0;
   while (i < DAYS.length) {
     const d = DAYS[i];
     const h = gymHours[d];
-    if (!h || h.closed) { i++; continue; }
+    if (!h || h.closed) {
+      i++;
+      continue;
+    }
     const hStr = `${fmt12(h.open)} – ${fmt12(h.close)}`;
     let j = i + 1;
     while (j < DAYS.length) {
@@ -63,7 +81,10 @@ export function Footer() {
 
   const siteData = useSiteData();
   const si = siteData?.studioInfo;
-  const gymName = si?.name?.toUpperCase() || siteData?.gym?.name?.toUpperCase() || "SERENITY WELLNESS";
+  const gymName =
+    si?.name?.toUpperCase() ||
+    siteData?.gym?.name?.toUpperCase() ||
+    "SERENITY WELLNESS";
   const instagram =
     siteData?.brand?.instagram_url ||
     siteData?.gym?.instagram ||
@@ -191,15 +212,27 @@ export function Footer() {
             <address className="not-italic space-y-3">
               <p className="font-body text-white/40 text-sm leading-relaxed">
                 {hasLiveAddr ? (
-                  <>{si?.address}<br />{si?.city}, {si?.state} {si?.zip}</>
+                  <>
+                    {si?.address}
+                    <br />
+                    {si?.city}, {si?.state} {si?.zip}
+                  </>
                 ) : (
-                  <>{studio.address.street}<br />{studio.address.city}, {studio.address.state}{" "}{studio.address.zip}</>
+                  <>
+                    {studio.address.street}
+                    <br />
+                    {studio.address.city}, {studio.address.state}{" "}
+                    {studio.address.zip}
+                  </>
                 )}
               </p>
               <div className="space-y-2 pt-2">
                 {(liveHours
                   ? liveHours
-                  : Object.entries(studio.hours).map(([day, hours]) => ({ label: day, hours }))
+                  : Object.entries(studio.hours).map(([day, hours]) => ({
+                      label: day,
+                      hours,
+                    }))
                 ).map(({ label, hours }) => (
                   <div
                     key={label}
