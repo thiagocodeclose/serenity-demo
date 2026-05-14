@@ -270,16 +270,28 @@ export function ClassesSection() {
                             <button
                               onClick={() => setSelPractice(ct.website_name || ct.name)}
                               style={{
-                                display: "flex", alignItems: "center", justifyContent: "space-between",
+                                display: "flex", alignItems: "center", gap: "0.75rem",
                                 width: "100%", background: "none", border: "none",
                                 borderBottom: "1px solid var(--border,#E5DDD5)",
-                                padding: "1rem 0", cursor: "pointer", textAlign: "left",
+                                padding: "0.75rem 0", cursor: "pointer", textAlign: "left",
+                                transition: "opacity 0.2s",
+                              }}
+                            >
+                              {/* Class thumbnail */}
+                              {(() => {
+                                const img = ct.image_url || sessions.find((sx: any) => sx.name === (ct.website_name || ct.name))?.class_image_url;
+                                return img
+                                  ? <img src={img} alt={ct.website_name || ct.name} style={{ width: 44, height: 44, objectFit: "cover", borderRadius: "var(--radius,2px)", flexShrink: 0 }} />
+                                  : <div style={{ width: 44, height: 44, background: "var(--bg-cream,#F0EBE3)", borderRadius: "var(--radius,2px)", flexShrink: 0 }} />;
+                              })()}
+                              <span style={{
+                                flex: 1,
                                 color: selPractice === (ct.website_name || ct.name) ? "var(--primary,#8B7355)" : "var(--text,#2C2C2C)",
                                 fontFamily: "var(--font-heading,'Cormorant Garamond',serif)",
                                 fontSize: "1.15rem", fontWeight: 400, transition: "color 0.2s",
-                              }}
-                            >
-                              <span>{ct.website_name || ct.name}</span>
+                              }}>
+                                {ct.website_name || ct.name}
+                              </span>
                               {selPractice === (ct.website_name || ct.name) && (
                                 <ChevronRight size={14} style={{ color: "var(--primary,#8B7355)", flexShrink: 0 }} />
                               )}
@@ -307,7 +319,7 @@ export function ClassesSection() {
                           </tr>
                         </thead>
                         <tbody>
-                          {rows.map((s) => <SRow key={s.id} s={s} onBook={openSlot} />)}
+                          {rows.map((s) => <SRow key={s.id} s={s} onBook={openSlot} instrPhoto={instructors.find((i: any) => i.name === s.instructor_name)?.photo_url} />)}
                         </tbody>
                       </table>
                     );
@@ -511,15 +523,27 @@ export function ClassesSection() {
                             }}>
                               {fmtTime(s.start_time)}
                             </span>
+                            {/* Class thumbnail */}
+                            {s.class_image_url && (
+                              <img src={s.class_image_url} alt={s.name} style={{ width: 52, height: 52, objectFit: "cover", borderRadius: "var(--radius,2px)", flexShrink: 0 }} />
+                            )}
                             <div style={{ flex: 1 }}>
                               <p style={{ fontFamily: "var(--font-heading,serif)", fontSize: "1.1rem", fontWeight: 400, color: "var(--text)", margin: 0 }}>
                                 {s.name}
                               </p>
-                              {s.instructor_name && (
-                                <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "2px", letterSpacing: "0.05em" }}>
-                                  with {s.instructor_name}{s.duration_minutes ? ` · ${s.duration_minutes} min` : ""}
-                                </p>
-                              )}
+                              {s.instructor_name && (() => {
+                                const instr = instructors.find((i: any) => i.name === s.instructor_name);
+                                return (
+                                  <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginTop: "4px" }}>
+                                    {instr?.photo_url && (
+                                      <img src={instr.photo_url} alt={s.instructor_name} style={{ width: 18, height: 18, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+                                    )}
+                                    <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", margin: 0, letterSpacing: "0.05em" }}>
+                                      with {s.instructor_name}{s.duration_minutes ? ` · ${s.duration_minutes} min` : ""}
+                                    </p>
+                                  </div>
+                                );
+                              })()}
                             </div>
                             {label && (
                               <span style={{
@@ -699,7 +723,7 @@ export function ClassesSection() {
 // ─────────────────────────────────────────────────────────────
 
 /** Single session row for tables */
-function SRow({ s, showClass = false, onBook }: { s: any; showClass?: boolean; onBook: (s: any) => void }) {
+function SRow({ s, showClass = false, onBook, instrPhoto }: { s: any; showClass?: boolean; onBook: (s: any) => void; instrPhoto?: string }) {
   const d     = new Date(s.scheduled_date + "T00:00:00");
   const label = spotsLabel(s);
   return (
@@ -722,7 +746,15 @@ function SRow({ s, showClass = false, onBook }: { s: any; showClass?: boolean; o
             )}
             <span style={{ fontFamily: "var(--font-heading,'Cormorant Garamond',serif)", fontSize: "1rem" }}>{s.name}</span>
           </div>
-        ) : (s.instructor_name || "—")}
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+            {instrPhoto
+              ? <img src={instrPhoto} alt={s.instructor_name} style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+              : <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--bg-cream,#F0EBE3)", flexShrink: 0 }} />
+            }
+            <span>{s.instructor_name || "—"}</span>
+          </div>
+        )}
       </td>
       <td style={{ padding: "1rem 0", textAlign: "right" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "1rem" }}>
