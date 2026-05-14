@@ -87,7 +87,7 @@ export function ClassesSection() {
 
   const slug = brand?.gym_slug || siteData?.gym?.slug || koriva.gymSlug;
   const base = brand?.base_url || siteData?.gym?.base_url || koriva.baseUrl;
-  const widgetKey = process.env.NEXT_PUBLIC_WIDGET_KEY || "";
+  const widgetKey = siteData?.widgetConfig?.widget_public_key || process.env.NEXT_PUBLIC_WIDGET_KEY || "";
 
   // ── Remote data
   const [sessions, setSessions]       = useState<any[]>([]);
