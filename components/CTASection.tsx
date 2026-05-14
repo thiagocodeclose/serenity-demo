@@ -25,7 +25,7 @@ export function CTASection() {
     return () => window.removeEventListener('message', handler);
   }, []);
 
-  const src = `${koriva.baseUrl}/widgets/lead/${koriva.gymSlug}?embed=1&cg_primary=8B7355&cg_bg=1A1714&cg_text=FAF8F5&cg_radius=4&cg_mode=dark`;
+  const src = `${koriva.baseUrl}/widgets/lead_capture/${koriva.gymSlug}?embed=1&cg_primary=8B7355&cg_bg=1A1714&cg_text=FAF8F5&cg_radius=4&cg_mode=dark`;
 
   return (
     <section
