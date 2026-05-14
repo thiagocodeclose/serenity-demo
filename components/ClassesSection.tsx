@@ -125,7 +125,7 @@ export function ClassesSection() {
 
   useEffect(() => {
     if (mode === "practice" && classTypes.length > 0 && !selPractice)
-      setSelPractice(classTypes[0].name);
+      setSelPractice(classTypes[0].website_name || classTypes[0].name);
   }, [mode, classTypes]);
 
   useEffect(() => {
@@ -167,7 +167,7 @@ export function ClassesSection() {
           name: form.name.trim(),
           email: form.email.trim(),
           phone: form.phone.trim() || undefined,
-          class_name: slot.class_name,
+          class_name: slot.name,
           class_date: slot.scheduled_date,
           class_time: slot.start_time,
           instructor: slot.instructor_name || undefined,
@@ -191,7 +191,7 @@ export function ClassesSection() {
         : a.scheduled_date.localeCompare(b.scheduled_date)
     );
   }
-  const forPractice = (name: string) => sortSess(sessions.filter((s) => s.class_name === name));
+  const forPractice = (name: string) => sortSess(sessions.filter((s) => s.name === name));
   const forTeacher  = (name: string) => sortSess(sessions.filter((s) => s.instructor_name === name));
   const forDay      = (d: Date)      => sessions
     .filter((s) => s.scheduled_date === toDateStr(d))
@@ -268,19 +268,19 @@ export function ClassesSection() {
                         {classTypes.map((ct) => (
                           <li key={ct.id}>
                             <button
-                              onClick={() => setSelPractice(ct.name)}
+                              onClick={() => setSelPractice(ct.website_name || ct.name)}
                               style={{
                                 display: "flex", alignItems: "center", justifyContent: "space-between",
                                 width: "100%", background: "none", border: "none",
                                 borderBottom: "1px solid var(--border,#E5DDD5)",
                                 padding: "1rem 0", cursor: "pointer", textAlign: "left",
-                                color: selPractice === ct.name ? "var(--primary,#8B7355)" : "var(--text,#2C2C2C)",
+                                color: selPractice === (ct.website_name || ct.name) ? "var(--primary,#8B7355)" : "var(--text,#2C2C2C)",
                                 fontFamily: "var(--font-heading,'Cormorant Garamond',serif)",
                                 fontSize: "1.15rem", fontWeight: 400, transition: "color 0.2s",
                               }}
                             >
-                              <span>{ct.name}</span>
-                              {selPractice === ct.name && (
+                              <span>{ct.website_name || ct.name}</span>
+                              {selPractice === (ct.website_name || ct.name) && (
                                 <ChevronRight size={14} style={{ color: "var(--primary,#8B7355)", flexShrink: 0 }} />
                               )}
                             </button>
@@ -513,7 +513,7 @@ export function ClassesSection() {
                             </span>
                             <div style={{ flex: 1 }}>
                               <p style={{ fontFamily: "var(--font-heading,serif)", fontSize: "1.1rem", fontWeight: 400, color: "var(--text)", margin: 0 }}>
-                                {s.class_name}
+                                {s.name}
                               </p>
                               {s.instructor_name && (
                                 <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "2px", letterSpacing: "0.05em" }}>
@@ -626,7 +626,7 @@ export function ClassesSection() {
                       Reserve your spot
                     </p>
                     <p style={{ fontFamily: "var(--font-heading,'Cormorant Garamond',serif)", fontSize: "1.6rem", fontWeight: 400, color: "var(--text)", margin: 0 }}>
-                      {slot.class_name}
+                      {slot.name}
                     </p>
                     <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginTop: "4px" }}>
                       {(() => {
@@ -716,9 +716,11 @@ function SRow({ s, showClass = false, onBook }: { s: any; showClass?: boolean; o
       </td>
       <td style={{ padding: "1rem 1rem 1rem 0", fontSize: "0.85rem", color: "var(--text)" }}>
         {showClass ? (
-          <div>
-            <span>{s.class_name}</span>
-            {s.instructor_name && <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block" }}>with {s.instructor_name}</span>}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            {s.class_image_url && (
+              <img src={s.class_image_url} alt={s.name} style={{ width: 38, height: 38, borderRadius: "var(--radius,2px)", objectFit: "cover", flexShrink: 0 }} />
+            )}
+            <span style={{ fontFamily: "var(--font-heading,'Cormorant Garamond',serif)", fontSize: "1rem" }}>{s.name}</span>
           </div>
         ) : (s.instructor_name || "—")}
       </td>
