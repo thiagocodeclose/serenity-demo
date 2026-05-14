@@ -30,6 +30,8 @@ export interface StudioInfo {
 
 type SiteContextValue = KorivaConfig & {
   studioInfo: StudioInfo | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  widgetConfig: Record<string, unknown> | null;
 };
 
 const SiteDataContext = createContext<SiteContextValue | null>(null);
@@ -47,7 +49,7 @@ export function SiteDataProvider({
   config: KorivaConfig | null;
 }) {
   const [ctx, setCtx] = useState<SiteContextValue | null>(
-    serverConfig ? { ...serverConfig, studioInfo: null } : null,
+    serverConfig ? { ...serverConfig, studioInfo: null, widgetConfig: null } : null,
   );
 
   useEffect(() => {
@@ -67,25 +69,29 @@ export function SiteDataProvider({
     resolveConfig.then((cfg) => {
       if (previewId && cfg) {
         setCtx((prev) =>
-          prev ? { ...prev, ...cfg } : { ...cfg, studioInfo: null },
+          prev ? { ...prev, ...cfg } : { ...cfg, studioInfo: null, widgetConfig: null },
         );
       }
 
       const slug = cfg?.gym?.slug || DEFAULT_SLUG;
 
-      // Fetch live studio info (address, hours, phone, etc.)
-      fetch(
-        `${KORIVA_API}/api/public/studio-info?slug=${encodeURIComponent(slug)}`,
-      )
-        .then((r) => (r.ok ? r.json() : null))
-        .catch(() => null)
-        .then((info: (StudioInfo & { error?: unknown }) | null) => {
-          if (info && !info.error) {
-            setCtx((prev) =>
-              prev ? { ...prev, studioInfo: info as StudioInfo } : null,
-            );
-          }
+      // Fetch live studio info + widget config in parallel
+      Promise.all([
+        fetch(`${KORIVA_API}/api/public/studio-info?slug=${encodeURIComponent(slug)}`)
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null),
+        fetch(`${KORIVA_API}/api/widgets/config?slug=${encodeURIComponent(slug)}`)
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null),
+      ]).then(([info, widgetCfg]: [(StudioInfo & { error?: unknown }) | null, Record<string, unknown> | null]) => {
+        setCtx((prev) => {
+          if (!prev) return prev;
+          const updates: Partial<SiteContextValue> = {};
+          if (info && !info.error) updates.studioInfo = info as StudioInfo;
+          if (widgetCfg && !(widgetCfg as { error?: unknown }).error) updates.widgetConfig = widgetCfg;
+          return { ...prev, ...updates };
         });
+      });
     });
   }, []);
 

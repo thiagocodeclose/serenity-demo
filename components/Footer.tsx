@@ -103,6 +103,27 @@ export function Footer() {
     : null;
   const tagline = siteData?.brand?.tagline || studio.tagline;
 
+  // Initialize integrations from live siteData (runs on mount + when config loads)
+  useEffect(() => {
+    const gym = siteData?.gym;
+    if (!gym) return;
+    const slug = gym.slug;
+    const baseUrl =
+      gym.base_url ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      "https://app.codegyms.com";
+    const widgetPortalUrl = (siteData as any)?.widgetConfig?.member_portal_url;
+    setIntegrations({
+      booking_enabled: !!gym.booking_enabled,
+      portal_enabled: !!gym.portal_enabled || !!widgetPortalUrl,
+      booking_url: slug ? `${baseUrl}/schedule/${slug}` : "#",
+      portal_url:
+        widgetPortalUrl ||
+        gym.portal_url ||
+        (slug ? `${baseUrl}/member/login?gym=${slug}` : "#"),
+    });
+  }, [siteData]);
+
   useEffect(() => {
     function handleBrandIntegrations(e: Event) {
       const d = (e as CustomEvent).detail as Record<string, unknown>;
@@ -121,7 +142,7 @@ export function Footer() {
         booking_url: slug ? `${baseUrl}/schedule/${slug}` : prev.booking_url,
         portal_url:
           (d.portal_url as string) ||
-          (slug ? `${baseUrl}/member-login/${slug}` : prev.portal_url),
+          (slug ? `${baseUrl}/member/login?gym=${slug}` : prev.portal_url),
       }));
     }
     window.addEventListener("koriva:brand", handleBrandIntegrations);

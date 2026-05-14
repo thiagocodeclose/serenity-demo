@@ -45,12 +45,15 @@ export function Header() {
       gym.base_url ||
       process.env.NEXT_PUBLIC_APP_URL ||
       "https://app.codegyms.com";
+    const widgetPortalUrl = (siteData as any)?.widgetConfig?.member_portal_url;
     setIntegrations({
       booking_enabled: !!gym.booking_enabled,
-      portal_enabled: !!gym.portal_enabled,
+      portal_enabled: !!gym.portal_enabled || !!widgetPortalUrl,
       booking_url: slug ? `${baseUrl}/schedule/${slug}` : "#",
       portal_url:
-        gym.portal_url || (slug ? `${baseUrl}/member-login/${slug}` : "#"),
+        widgetPortalUrl ||
+        gym.portal_url ||
+        (slug ? `${baseUrl}/member/login?gym=${slug}` : "#"),
     });
   }, [siteData]);
 
@@ -74,7 +77,7 @@ export function Header() {
           booking_url: slug ? `${baseUrl}/schedule/${slug}` : "#",
           portal_url:
             (d.portal_url as string) ||
-            (slug ? `${baseUrl}/member-login/${slug}` : "#"),
+            (slug ? `${baseUrl}/member/login?gym=${slug}` : "#"),
         });
       }
     }
@@ -207,6 +210,20 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+            {integrations.portal_enabled && (
+              <a
+                href={integrations.portal_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMenuOpen(false)}
+                className="font-body text-sm tracking-widest uppercase flex items-center gap-2"
+                style={{ color: "var(--text-muted)" }}
+                aria-label="Member portal"
+              >
+                <User size={14} />
+                Member Area
+              </a>
+            )}
             <Link
               href={
                 integrations.booking_enabled
