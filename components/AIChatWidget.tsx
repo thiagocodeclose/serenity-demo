@@ -9,7 +9,7 @@ export function AIChatWidget() {
   const siteData = useSiteData();
   const iframeRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [chatEnabled, setChatEnabled] = useState(false);
+  const [chatEnabled, setChatEnabled] = useState(true);
   const [gymSlug, setGymSlug] = useState(koriva.gymSlug);
   const [base, setBase] = useState(koriva.baseUrl);
   const [primary, setPrimary] = useState('8B7355');
@@ -24,8 +24,10 @@ export function AIChatWidget() {
     if (gym.base_url) setBase(gym.base_url);
     if (brand?.color_primary) setPrimary(brand.color_primary.replace('#', ''));
     if (brand?.color_bg) setBg(brand.color_bg.replace('#', ''));
-    // Enable: explicit widgets_ai_chat flag, or booking_enabled as fallback
-    setChatEnabled(!!(brand?.widgets_ai_chat || gym.booking_enabled));
+    // Enable by default; disable only if both flags are explicitly false
+    const explicitlyDisabled =
+      brand?.widgets_ai_chat === false && gym.booking_enabled === false;
+    if (explicitlyDisabled) setChatEnabled(false);
   }, [siteData]);
 
   // Listen to koriva:brand for live-preview updates (admin builder)
@@ -36,7 +38,8 @@ export function AIChatWidget() {
       if (d.base_url !== undefined) setBase(d.base_url);
       if (d.primary_color !== undefined) setPrimary(d.primary_color?.replace('#', '') ?? '8B7355');
       if (d.bg_color !== undefined) setBg(d.bg_color?.replace('#', '') ?? 'FAF9F6');
-      if (d.booking_enabled !== undefined) setChatEnabled(!!d.booking_enabled);
+      if (d.booking_enabled === false) setChatEnabled(false);
+      if (d.booking_enabled === true) setChatEnabled(true);
     }
     window.addEventListener('koriva:brand', handler);
     return () => window.removeEventListener('koriva:brand', handler);
