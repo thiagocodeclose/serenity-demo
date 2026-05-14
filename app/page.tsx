@@ -9,6 +9,7 @@ import { PricingSection } from "@/components/PricingSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { PressSection } from "@/components/PressSection";
 import { CTASection } from "@/components/CTASection";
+import { AIChatWidget } from "@/components/AIChatWidget";
 
 export default function HomePage() {
   return (
@@ -24,6 +25,7 @@ export default function HomePage() {
       <TestimonialsSection />
       <PressSection />
       <CTASection />
+      <AIChatWidget />
     </>
   );
 }
