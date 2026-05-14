@@ -1,19 +1,40 @@
 'use client';
 // components/SiteDataProvider.tsx
-// Provides live Koriva config to all client components via context.
+// Provides live Koriva config + live studio operational data to all client components.
 // Falls back silently — components use static site-data.ts when config is null.
 //
 // Preview mode: if ?preview_id=<site_uuid> is in the URL, fetches the draft
-// config from the Koriva API and overrides the server-side config. This allows
-// the admin to share a preview link with the client without deploying.
+// config from the Koriva API and overrides the server-side config.
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { KorivaConfig } from '@/lib/koriva-config';
 
-const SiteDataContext = createContext<KorivaConfig | null>(null);
+// studioInfo shape from /api/public/studio-info (get_public_studio_info RPC)
+export interface StudioInfo {
+  name?: string;
+  logo?: string | null;
+  address?: string | null;    // street address
+  city?: string | null;
+  state?: string | null;
+  zip?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  website?: string | null;
+  social_links?: Record<string, string>;
+  timezone?: string | null;
+  operating_hours?: Record<string, { open: string; close: string; closed: boolean }> | null;
+}
+
+type SiteContextValue = KorivaConfig & {
+  studioInfo: StudioInfo | null;
+};
+
+const SiteDataContext = createContext<SiteContextValue | null>(null);
 
 const KORIVA_API =
   process.env.NEXT_PUBLIC_CODEGYM_URL || 'https://app.codegyms.com';
+
+const DEFAULT_SLUG = process.env.NEXT_PUBLIC_GYM_SLUG || 'serenity-wellness';
 
 export function SiteDataProvider({
   children,
@@ -22,36 +43,51 @@ export function SiteDataProvider({
   children: React.ReactNode;
   config: KorivaConfig | null;
 }) {
-  const [config, setConfig] = useState<KorivaConfig | null>(serverConfig);
+  const [ctx, setCtx] = useState<SiteContextValue | null>(
+    serverConfig ? { ...serverConfig, studioInfo: null } : null
+  );
 
   useEffect(() => {
-    // Check for ?preview_id= in the URL — signals a client preview share link
     const previewId =
       typeof window !== 'undefined'
         ? new URLSearchParams(window.location.search).get('preview_id')
         : null;
 
-    if (!previewId) return;
+    const resolveConfig: Promise<KorivaConfig | null> = previewId
+      ? fetch(`${KORIVA_API}/api/site-config?preview_id=${encodeURIComponent(previewId)}`)
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null)
+      : Promise.resolve(serverConfig);
 
-    // Fetch the draft config from the Koriva API (no auth required)
-    fetch(`${KORIVA_API}/api/site-config?preview_id=${encodeURIComponent(previewId)}`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data: KorivaConfig | null) => {
-        if (data) setConfig(data);
-      })
-      .catch(() => {
-        // Silently fall back to server config on error
-      });
+    resolveConfig.then((cfg) => {
+      if (previewId && cfg) {
+        setCtx((prev) => (prev ? { ...prev, ...cfg } : { ...cfg, studioInfo: null }));
+      }
+
+      const slug = cfg?.gym?.slug || DEFAULT_SLUG;
+
+      // Fetch live studio info (address, hours, phone, etc.)
+      fetch(`${KORIVA_API}/api/public/studio-info?slug=${encodeURIComponent(slug)}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null)
+        .then((info: (StudioInfo & { error?: unknown }) | null) => {
+          if (info && !info.error) {
+            setCtx((prev) =>
+              prev ? { ...prev, studioInfo: info as StudioInfo } : null
+            );
+          }
+        });
+    });
   }, []);
 
   return (
-    <SiteDataContext.Provider value={config}>
+    <SiteDataContext.Provider value={ctx}>
       {children}
     </SiteDataContext.Provider>
   );
 }
 
-/** Returns live Koriva config, or null if not yet published / API unavailable. */
-export function useSiteData(): KorivaConfig | null {
+/** Returns live Koriva config + studioInfo, or null if unavailable. */
+export function useSiteData(): SiteContextValue | null {
   return useContext(SiteDataContext);
 }

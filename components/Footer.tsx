@@ -62,7 +62,8 @@ export function Footer() {
   });
 
   const siteData = useSiteData();
-  const gymName = siteData?.gym?.name?.toUpperCase() || "SERENITY WELLNESS";
+  const si = siteData?.studioInfo;
+  const gymName = si?.name?.toUpperCase() || siteData?.gym?.name?.toUpperCase() || "SERENITY WELLNESS";
   const instagram =
     siteData?.brand?.instagram_url ||
     siteData?.gym?.instagram ||
@@ -73,10 +74,11 @@ export function Footer() {
     studio.social.facebook;
   const currentYear = new Date().getFullYear();
 
-  // Live address + hours from gym config
-  const liveAddr = parseGymAddress(siteData?.gym?.gym_address);
-  const liveHours = siteData?.gym?.gym_hours
-    ? buildHoursDisplay(siteData.gym.gym_hours)
+  // Address from studioInfo (same source as Forma template)
+  const hasLiveAddr = !!(si?.address || si?.city);
+  // Hours from studioInfo.operating_hours
+  const liveHours = si?.operating_hours
+    ? buildHoursDisplay(si.operating_hours)
     : null;
   const tagline = siteData?.brand?.tagline || studio.tagline;
 
@@ -188,8 +190,8 @@ export function Footer() {
             </p>
             <address className="not-italic space-y-3">
               <p className="font-body text-white/40 text-sm leading-relaxed">
-                {liveAddr ? (
-                  <>{liveAddr.street}<br />{liveAddr.cityLine}</>
+                {hasLiveAddr ? (
+                  <>{si?.address}<br />{si?.city}, {si?.state} {si?.zip}</>
                 ) : (
                   <>{studio.address.street}<br />{studio.address.city}, {studio.address.state}{" "}{studio.address.zip}</>
                 )}
