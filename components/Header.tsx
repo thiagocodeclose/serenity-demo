@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { useSiteData } from "@/components/SiteDataProvider";
 
 const navLinks = [
@@ -36,6 +36,21 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Initialize from SSR config (production)
+  useEffect(() => {
+    const gym = siteData?.gym;
+    if (!gym) return;
+    const slug = gym.slug;
+    const baseUrl = gym.base_url || process.env.NEXT_PUBLIC_APP_URL || "https://app.codegyms.com";
+    setIntegrations({
+      booking_enabled: !!gym.booking_enabled,
+      portal_enabled: !!gym.portal_enabled,
+      booking_url: slug ? `${baseUrl}/schedule/${slug}` : "#",
+      portal_url: gym.portal_url || (slug ? `${baseUrl}/member-login/${slug}` : "#"),
+    });
+  }, [siteData]);
+
+  // Update from live-preview (koriva:brand event — admin builder only)
   useEffect(() => {
     function handleBrand(e: Event) {
       const d = (e as CustomEvent).detail as Record<string, unknown>;
@@ -46,7 +61,9 @@ export function Header() {
       ) {
         const slug = (d.gym_slug as string) || "";
         const baseUrl =
-          process.env.NEXT_PUBLIC_APP_URL || "https://app.codegyms.com";
+          (d.base_url as string) ||
+          process.env.NEXT_PUBLIC_APP_URL ||
+          "https://app.codegyms.com";
         setIntegrations({
           booking_enabled: !!d.booking_enabled,
           portal_enabled: !!d.portal_enabled,
@@ -62,8 +79,10 @@ export function Header() {
   }, []);
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+      className="fixed left-0 right-0 z-50"
       style={{
+        top: "var(--bar-h, 0px)",
+        transition: "top 0.2s ease, background-color 0.5s, border-color 0.5s, backdrop-filter 0.5s",
         backgroundColor: scrolled ? "var(--bg)" : "transparent",
         borderBottom: scrolled
           ? "1px solid var(--border)"
@@ -113,7 +132,26 @@ export function Header() {
           </nav>
 
           {/* CTA */}
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-3">
+            {integrations.portal_enabled && (
+              <a
+                href={integrations.portal_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-body text-xs tracking-widest uppercase px-4 py-2.5 flex items-center gap-1.5 transition-all duration-300"
+                style={{
+                  border: scrolled
+                    ? "1px solid var(--border, rgba(0,0,0,0.15))"
+                    : "1px solid rgba(255,255,255,0.28)",
+                  color: scrolled ? "var(--text-muted)" : "rgba(255,255,255,0.75)",
+                  borderRadius: "var(--radius, 0px)",
+                }}
+                aria-label="Member portal"
+              >
+                <User size={12} />
+                Member Area
+              </a>
+            )}
             <Link
               href={
                 integrations.booking_enabled
@@ -130,19 +168,6 @@ export function Header() {
             >
               Book Free Class
             </Link>
-            {integrations.portal_enabled && (
-              <a
-                href={integrations.portal_url}
-                className="font-body text-xs tracking-widest uppercase transition-colors"
-                style={{
-                  color: "rgba(255,255,255,0.6)",
-                  textDecoration: "none",
-                  padding: "0.5rem 0.75rem",
-                }}
-              >
-                Member Login
-              </a>
-            )}
           </div>
 
           {/* Mobile menu button */}

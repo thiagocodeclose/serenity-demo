@@ -6,6 +6,53 @@ import { Instagram, Facebook, Youtube } from "lucide-react";
 import { studio } from "@/lib/site-data";
 import { useSiteData } from "@/components/SiteDataProvider";
 
+// ── Address + hours helpers ──────────────────────────────────────────────────
+function parseGymAddress(ga?: string) {
+  if (!ga || !ga.trim()) return null;
+  const parts = ga.split(', ');
+  if (parts.length < 2) return { street: ga, cityLine: '' };
+  return { street: parts[0], cityLine: parts.slice(1).join(', ') };
+}
+
+type DayHours = { open: string; close: string; closed: boolean };
+
+function fmt12(t: string): string {
+  const [hStr, mStr] = t.split(':');
+  const h = parseInt(hStr, 10);
+  const m = parseInt(mStr, 10);
+  const p = h < 12 ? 'AM' : 'PM';
+  const h12 = h % 12 || 12;
+  return m === 0 ? `${h12}:00 ${p}` : `${h12}:${String(m).padStart(2, '0')} ${p}`;
+}
+
+function buildHoursDisplay(
+  gymHours: Record<string, DayHours>
+): Array<{ label: string; hours: string }> {
+  const DAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+  const SHORT: Record<string, string> = {
+    monday: 'Mon', tuesday: 'Tue', wednesday: 'Wed', thursday: 'Thu',
+    friday: 'Fri', saturday: 'Sat', sunday: 'Sun',
+  };
+  const result: Array<{ label: string; hours: string }> = [];
+  let i = 0;
+  while (i < DAYS.length) {
+    const d = DAYS[i];
+    const h = gymHours[d];
+    if (!h || h.closed) { i++; continue; }
+    const hStr = `${fmt12(h.open)} – ${fmt12(h.close)}`;
+    let j = i + 1;
+    while (j < DAYS.length) {
+      const nh = gymHours[DAYS[j]];
+      if (!nh || nh.closed || nh.open !== h.open || nh.close !== h.close) break;
+      j++;
+    }
+    const label = i === j - 1 ? SHORT[d] : `${SHORT[d]}–${SHORT[DAYS[j - 1]]}`;
+    result.push({ label, hours: hStr });
+    i = j;
+  }
+  return result;
+}
+
 export function Footer() {
   const [integrations, setIntegrations] = useState({
     booking_enabled: false,
@@ -25,6 +72,13 @@ export function Footer() {
     siteData?.gym?.facebook ||
     studio.social.facebook;
   const currentYear = new Date().getFullYear();
+
+  // Live address + hours from gym config
+  const liveAddr = parseGymAddress(siteData?.gym?.gym_address);
+  const liveHours = siteData?.gym?.gym_hours
+    ? buildHoursDisplay(siteData.gym.gym_hours)
+    : null;
+  const tagline = siteData?.brand?.tagline || studio.tagline;
 
   useEffect(() => {
     function handleBrandIntegrations(e: Event) {
@@ -68,8 +122,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="font-body text-white/40 text-sm leading-relaxed mt-4 max-w-xs">
-              Santa Monica's sanctuary for yoga, pilates, and mindful movement.
-              Where every breath matters.
+              {tagline}
             </p>
             {/* Social */}
             <div className="flex gap-4 mt-6">
@@ -135,19 +188,23 @@ export function Footer() {
             </p>
             <address className="not-italic space-y-3">
               <p className="font-body text-white/40 text-sm leading-relaxed">
-                {studio.address.street}
-                <br />
-                {studio.address.city}, {studio.address.state}{" "}
-                {studio.address.zip}
+                {liveAddr ? (
+                  <>{liveAddr.street}<br />{liveAddr.cityLine}</>
+                ) : (
+                  <>{studio.address.street}<br />{studio.address.city}, {studio.address.state}{" "}{studio.address.zip}</>
+                )}
               </p>
               <div className="space-y-2 pt-2">
-                {Object.entries(studio.hours).map(([day, hours]) => (
+                {(liveHours
+                  ? liveHours
+                  : Object.entries(studio.hours).map(([day, hours]) => ({ label: day, hours }))
+                ).map(({ label, hours }) => (
                   <div
-                    key={day}
+                    key={label}
                     className="flex justify-between gap-4 text-xs font-body"
                   >
                     <span className="text-white/30 uppercase tracking-wider">
-                      {day}
+                      {label}
                     </span>
                     <span className="text-white/50">{hours}</span>
                   </div>
@@ -165,7 +222,7 @@ export function Footer() {
       >
         <div className="container-wide py-5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="font-body text-white/25 text-xs tracking-wide">
-            © {currentYear} {studio.name}. All rights reserved.
+            © {currentYear} {gymName}. All rights reserved.
           </p>
           <a
             href="https://codegyms.com"

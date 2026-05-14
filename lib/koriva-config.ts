@@ -7,10 +7,12 @@ import type { SiteContent } from "@/types/site-content";
 export interface GymInfo {
   name: string;
   slug: string;
-  address?: string;
+  address?: string;         // street only
+  gym_address?: string;     // full: "1499 S Congress Ave, Austin, TX 78704"
   phone?: string;
   email?: string;
   hours?: Record<string, string>;
+  gym_hours?: Record<string, { open: string; close: string; closed: boolean }>;
   instagram?: string;
   facebook?: string;
   // Integration flags

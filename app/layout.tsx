@@ -14,6 +14,7 @@ import { SiteDataProvider } from "@/components/SiteDataProvider";
 
 import { KorivaLivePreview } from "@/components/KorivaLivePreview";
 import { AIChatWidget } from "@/components/AIChatWidget";
+import { AnnouncementBar } from "@/components/AnnouncementBar";
 const heading = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -130,6 +131,7 @@ export default async function RootLayout({
       <body>
         <KorivaLivePreview />
         <SiteDataProvider config={siteConfig}>
+          <AnnouncementBar />
           <Header />
           <main id="main-content">{children}</main>
           <Footer />
