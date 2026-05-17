@@ -1,21 +1,21 @@
 'use client';
 
 import { Reveal } from '@/components/Reveal';
-import { useKorivaElement } from '@/hooks/useKorivaElement';
-import { koriva } from '@/lib/site-data';
+import { useGarrison365Element } from '@/hooks/useGarrison365Element';
+import { garrison365 } from '@/lib/site-data';
 import { useEffect, useRef, useState } from 'react';
 
 export function CTASection() {
   const [iframeHeight, setIframeHeight] = useState(320);
-  const eyebrow = useKorivaElement('cta_eyebrow', { content: 'Start Today', visible: true }, { section: 'CTA', label: 'Eyebrow', type: 'eyebrow' });
-  const headline = useKorivaElement('cta_headline', { content: 'Begin Your Practice', visible: true }, { section: 'CTA', label: 'Headline', type: 'text' });
-  const description = useKorivaElement('cta_description', { content: 'Claim your complimentary first class. No credit card required. One of our team will reach out to welcome you personally.', visible: true }, { section: 'CTA', label: 'Description', type: 'text' });
-  const trustCopy = useKorivaElement('cta_trust_copy', { content: 'No spam. Unsubscribe anytime. We respect your privacy.', visible: true }, { section: 'CTA', label: 'Trust Copy', type: 'text' });
-  const bgImage = useKorivaElement('cta_bg_image', { content: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=70&auto=format&fit=crop', visible: true }, { section: 'CTA', label: 'Background Image', type: 'image' });
+  const eyebrow = useGarrison365Element('cta_eyebrow', { content: 'Start Today', visible: true }, { section: 'CTA', label: 'Eyebrow', type: 'eyebrow' });
+  const headline = useGarrison365Element('cta_headline', { content: 'Begin Your Practice', visible: true }, { section: 'CTA', label: 'Headline', type: 'text' });
+  const description = useGarrison365Element('cta_description', { content: 'Claim your complimentary first class. No credit card required. One of our team will reach out to welcome you personally.', visible: true }, { section: 'CTA', label: 'Description', type: 'text' });
+  const trustCopy = useGarrison365Element('cta_trust_copy', { content: 'No spam. Unsubscribe anytime. We respect your privacy.', visible: true }, { section: 'CTA', label: 'Trust Copy', type: 'text' });
+  const bgImage = useGarrison365Element('cta_bg_image', { content: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=70&auto=format&fit=crop', visible: true }, { section: 'CTA', label: 'Background Image', type: 'image' });
 
   useEffect(() => {
     const handler = (e: MessageEvent) => {
-      if (e.origin !== koriva.baseUrl) return;
+      if (e.origin !== garrison365.baseUrl) return;
       const d = e.data;
       if (d?.source === 'codegym-widget' && d?.type === 'widget:resize' && d?.widget === 'lead') {
         setIframeHeight(d.payload.height + 24);
@@ -25,7 +25,7 @@ export function CTASection() {
     return () => window.removeEventListener('message', handler);
   }, []);
 
-  const src = `${koriva.baseUrl}/widgets/lead_capture/${koriva.gymSlug}?embed=1&cg_primary=8B7355&cg_bg=1A1714&cg_text=FAF8F5&cg_radius=4&cg_mode=dark`;
+  const src = `${garrison365.baseUrl}/widgets/lead_capture/${garrison365.gymSlug}?embed=1&cg_primary=8B7355&cg_bg=1A1714&cg_text=FAF8F5&cg_radius=4&cg_mode=dark`;
 
   return (
     <section
@@ -78,7 +78,7 @@ export function CTASection() {
               <iframe
                 src={src}
                 title="Join Serenity Wellness Studio"
-                className="koriva-widget-frame"
+                className="garrison365-widget-frame"
                 style={{ height: `${iframeHeight}px` }}
                 allow="clipboard-write"
                 loading="lazy"

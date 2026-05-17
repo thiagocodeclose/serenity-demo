@@ -1,5 +1,5 @@
-// ─── Koriva integration ───────────────────────────────────────────────────────
-export const koriva = {
+// ─── Garrison365 integration ───────────────────────────────────────────────────────
+export const garrison365 = {
   baseUrl: process.env.NEXT_PUBLIC_CODEGYM_URL || "https://app.codegyms.com",
   gymSlug: process.env.NEXT_PUBLIC_GYM_SLUG || "serenity-wellness",
   widgetKey: process.env.NEXT_PUBLIC_WIDGET_KEY || "",

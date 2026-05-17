@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Reveal } from "@/components/Reveal";
-import { useKorivaElement } from "@/hooks/useKorivaElement";
+import { useGarrison365Element } from "@/hooks/useGarrison365Element";
 import { instructors } from "@/lib/site-data";
 import { useSiteData } from "@/components/SiteDataProvider";
 import { Instagram } from "lucide-react";
@@ -25,9 +25,9 @@ const fallback: FeaturedTeacher[] = instructors.map(toFeaturedTeacher);
 
 export function TeachersSection() {
   const siteData = useSiteData();
-  const eyebrow = useKorivaElement('teachers_eyebrow', { content: 'The Guides', visible: true }, { section: 'Teachers', label: 'Eyebrow', type: 'eyebrow' });
-  const headline = useKorivaElement('teachers_headline', { content: 'Meet Your Teachers', visible: true }, { section: 'Teachers', label: 'Headline', type: 'text' });
-  const description = useKorivaElement('teachers_description', { content: 'Trained across the globe, our instructors bring depth, warmth, and decades of combined experience to every class.', visible: true }, { section: 'Teachers', label: 'Description', type: 'text' });
+  const eyebrow = useGarrison365Element('teachers_eyebrow', { content: 'The Guides', visible: true }, { section: 'Teachers', label: 'Eyebrow', type: 'eyebrow' });
+  const headline = useGarrison365Element('teachers_headline', { content: 'Meet Your Teachers', visible: true }, { section: 'Teachers', label: 'Headline', type: 'text' });
+  const description = useGarrison365Element('teachers_description', { content: 'Trained across the globe, our instructors bring depth, warmth, and decades of combined experience to every class.', visible: true }, { section: 'Teachers', label: 'Description', type: 'text' });
 
   const initial: FeaturedTeacher[] = siteData?.site_content?.featured_teachers
     ?.length
@@ -42,8 +42,8 @@ export function TeachersSection() {
       if (content.featured_teachers?.length)
         setTeachers(content.featured_teachers);
     }
-    window.addEventListener("koriva:content", handler);
-    return () => window.removeEventListener("koriva:content", handler);
+    window.addEventListener("garrison365:content", handler);
+    return () => window.removeEventListener("garrison365:content", handler);
   }, []);
 
   return (

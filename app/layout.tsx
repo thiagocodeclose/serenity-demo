@@ -6,13 +6,13 @@ import { Footer } from "@/components/Footer";
 import { GlobalWidgets } from "@/components/GlobalWidgets";
 import { JsonLd } from "@/components/JsonLd";
 import {
-  getKorivaConfig,
+  getGarrison365Config,
   buildCssVars,
   IS_TEMPLATE_DEMO,
-} from "@/lib/koriva-config";
+} from "@/lib/garrison365-config";
 import { SiteDataProvider } from "@/components/SiteDataProvider";
 
-import { KorivaLivePreview } from "@/components/KorivaLivePreview";
+import { Garrison365LivePreview } from "@/components/Garrison365LivePreview";
 import { AIChatWidget } from "@/components/AIChatWidget";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 const heading = Cormorant_Garamond({
@@ -38,7 +38,7 @@ const DEFAULT_DESC =
   "Santa Monica's premier yoga, pilates & wellness studio. Drop-in classes, memberships & private sessions. 2,400+ members. 4.9★ on Google. First class free.";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const config = await getKorivaConfig();
+  const config = await getGarrison365Config();
   const title = config?.seo?.title || DEFAULT_TITLE;
   const description = config?.seo?.description || DEFAULT_DESC;
   const gymName = config?.gym?.name || "Serenity Wellness Studio";
@@ -112,7 +112,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const config = await getKorivaConfig();
+  const config = await getGarrison365Config();
   const cssVars = buildCssVars(config?.brand); // returns {} in TEMPLATE_DEMO mode
 
   // In template-demo mode: preserve gym data (instructors, classes) but strip brand
@@ -129,7 +129,7 @@ export default async function RootLayout({
         <JsonLd />
       </head>
       <body>
-        <KorivaLivePreview />
+        <Garrison365LivePreview />
         <SiteDataProvider config={siteConfig}>
           <AnnouncementBar />
           <Header />

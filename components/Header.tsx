@@ -57,7 +57,7 @@ export function Header() {
     });
   }, [siteData]);
 
-  // Update from live-preview (koriva:brand event — admin builder only)
+  // Update from live-preview (garrison365:brand event — admin builder only)
   useEffect(() => {
     function handleBrand(e: Event) {
       const d = (e as CustomEvent).detail as Record<string, unknown>;
@@ -81,8 +81,8 @@ export function Header() {
         });
       }
     }
-    window.addEventListener("koriva:brand", handleBrand);
-    return () => window.removeEventListener("koriva:brand", handleBrand);
+    window.addEventListener("garrison365:brand", handleBrand);
+    return () => window.removeEventListener("garrison365:brand", handleBrand);
   }, []);
   return (
     <header

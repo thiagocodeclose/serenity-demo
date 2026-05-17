@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { koriva } from '@/lib/site-data';
+import { garrison365 } from '@/lib/site-data';
 
 interface Banner {
   id: string;
@@ -55,18 +55,18 @@ export function PromoBannersSection() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [active, setActive] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
-  const [gymSlug, setGymSlug] = useState(koriva.gymSlug);
-  const [base, setBase] = useState(koriva.baseUrl);
+  const [gymSlug, setGymSlug] = useState(garrison365.gymSlug);
+  const [base, setBase] = useState(garrison365.baseUrl);
 
-  // Listen to koriva:brand for dynamic slug
+  // Listen to garrison365:brand for dynamic slug
   useEffect(() => {
     function handler(e: Event) {
       const d = (e as CustomEvent).detail as Record<string, any>;
       if (d.gym_slug !== undefined) setGymSlug(d.gym_slug);
       if (d.base_url !== undefined) setBase(d.base_url);
     }
-    window.addEventListener('koriva:brand', handler);
-    return () => window.removeEventListener('koriva:brand', handler);
+    window.addEventListener('garrison365:brand', handler);
+    return () => window.removeEventListener('garrison365:brand', handler);
   }, []);
 
   useEffect(() => {

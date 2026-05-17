@@ -143,8 +143,8 @@ h1, h2, h3, h4, h5 {
   border-color: #fff;
 }
 
-/* ─── Koriva widget iframe ─────────────────────────────────────────────── */
-.koriva-widget-frame {
+/* ─── Garrison365 widget iframe ─────────────────────────────────────────────── */
+.garrison365-widget-frame {
   width: 100%;
   border: none;
   display: block;

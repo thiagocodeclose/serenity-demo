@@ -12,7 +12,7 @@ export function AnnouncementBar() {
   const [bgColor, setBgColor] = useState("");
   const [textColor, setTextColor] = useState("");
 
-  // Initialize from SSR config (production — koriva:brand event never fires here)
+  // Initialize from SSR config (production — garrison365:brand event never fires here)
   useEffect(() => {
     const gym = siteData?.gym;
     if (gym?.announcement_enabled && gym?.announcement_text) {
@@ -35,7 +35,7 @@ export function AnnouncementBar() {
     };
   }, [visible]);
 
-  // Listen for live-preview updates (koriva:brand event from admin builder)
+  // Listen for live-preview updates (garrison365:brand event from admin builder)
   useEffect(() => {
     function handler(e: Event) {
       const d = (e as CustomEvent).detail as Record<string, unknown>;
@@ -52,8 +52,8 @@ export function AnnouncementBar() {
         setVisible(enabled && !!(d.announcement_text || text));
       }
     }
-    window.addEventListener("koriva:brand", handler);
-    return () => window.removeEventListener("koriva:brand", handler);
+    window.addEventListener("garrison365:brand", handler);
+    return () => window.removeEventListener("garrison365:brand", handler);
   }, [text]);
 
   if (!visible || !text) return null;

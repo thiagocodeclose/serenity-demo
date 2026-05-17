@@ -1,14 +1,14 @@
 'use client';
 
-import { useKorivaElement } from '@/hooks/useKorivaElement';
+import { useGarrison365Element } from '@/hooks/useGarrison365Element';
 import { motion } from 'framer-motion';
 
 export function PhilosophyBar() {
-  const p1 = useKorivaElement('philbar_1', { content: 'Presence', visible: true }, { section: 'Philosophy Bar', label: 'Pillar 1', type: 'text' });
-  const p2 = useKorivaElement('philbar_2', { content: 'Breath', visible: true }, { section: 'Philosophy Bar', label: 'Pillar 2', type: 'text' });
-  const p3 = useKorivaElement('philbar_3', { content: 'Strength', visible: true }, { section: 'Philosophy Bar', label: 'Pillar 3', type: 'text' });
-  const p4 = useKorivaElement('philbar_4', { content: 'Community', visible: true }, { section: 'Philosophy Bar', label: 'Pillar 4', type: 'text' });
-  const p5 = useKorivaElement('philbar_5', { content: 'Balance', visible: true }, { section: 'Philosophy Bar', label: 'Pillar 5', type: 'text' });
+  const p1 = useGarrison365Element('philbar_1', { content: 'Presence', visible: true }, { section: 'Philosophy Bar', label: 'Pillar 1', type: 'text' });
+  const p2 = useGarrison365Element('philbar_2', { content: 'Breath', visible: true }, { section: 'Philosophy Bar', label: 'Pillar 2', type: 'text' });
+  const p3 = useGarrison365Element('philbar_3', { content: 'Strength', visible: true }, { section: 'Philosophy Bar', label: 'Pillar 3', type: 'text' });
+  const p4 = useGarrison365Element('philbar_4', { content: 'Community', visible: true }, { section: 'Philosophy Bar', label: 'Pillar 4', type: 'text' });
+  const p5 = useGarrison365Element('philbar_5', { content: 'Balance', visible: true }, { section: 'Philosophy Bar', label: 'Pillar 5', type: 'text' });
 
   const pillars = [p1, p2, p3, p4, p5];
 

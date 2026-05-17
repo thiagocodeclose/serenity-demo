@@ -1,13 +1,13 @@
 "use client";
 // components/SiteDataProvider.tsx
-// Provides live Koriva config + live studio operational data to all client components.
+// Provides live Garrison365 config + live studio operational data to all client components.
 // Falls back silently — components use static site-data.ts when config is null.
 //
 // Preview mode: if ?preview_id=<site_uuid> is in the URL, fetches the draft
-// config from the Koriva API and overrides the server-side config.
+// config from the Garrison365 API and overrides the server-side config.
 
 import { createContext, useContext, useEffect, useState } from "react";
-import type { KorivaConfig } from "@/lib/koriva-config";
+import type { Garrison365Config } from "@/lib/garrison365-config";
 
 // studioInfo shape from /api/public/studio-info (get_public_studio_info RPC)
 export interface StudioInfo {
@@ -28,7 +28,7 @@ export interface StudioInfo {
   > | null;
 }
 
-type SiteContextValue = KorivaConfig & {
+type SiteContextValue = Garrison365Config & {
   studioInfo: StudioInfo | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   widgetConfig: Record<string, unknown> | null;
@@ -36,7 +36,7 @@ type SiteContextValue = KorivaConfig & {
 
 const SiteDataContext = createContext<SiteContextValue | null>(null);
 
-const KORIVA_API =
+const GARRISON365_API =
   process.env.NEXT_PUBLIC_CODEGYM_URL || "https://app.codegyms.com";
 
 const DEFAULT_SLUG = process.env.NEXT_PUBLIC_GYM_SLUG || "serenity-wellness";
@@ -46,10 +46,12 @@ export function SiteDataProvider({
   config: serverConfig,
 }: {
   children: React.ReactNode;
-  config: KorivaConfig | null;
+  config: Garrison365Config | null;
 }) {
   const [ctx, setCtx] = useState<SiteContextValue | null>(
-    serverConfig ? { ...serverConfig, studioInfo: null, widgetConfig: null } : null,
+    serverConfig
+      ? { ...serverConfig, studioInfo: null, widgetConfig: null }
+      : null,
   );
 
   useEffect(() => {
@@ -58,9 +60,9 @@ export function SiteDataProvider({
         ? new URLSearchParams(window.location.search).get("preview_id")
         : null;
 
-    const resolveConfig: Promise<KorivaConfig | null> = previewId
+    const resolveConfig: Promise<Garrison365Config | null> = previewId
       ? fetch(
-          `${KORIVA_API}/api/site-config?preview_id=${encodeURIComponent(previewId)}`,
+          `${GARRISON365_API}/api/site-config?preview_id=${encodeURIComponent(previewId)}`,
         )
           .then((r) => (r.ok ? r.json() : null))
           .catch(() => null)
@@ -69,7 +71,9 @@ export function SiteDataProvider({
     resolveConfig.then((cfg) => {
       if (previewId && cfg) {
         setCtx((prev) =>
-          prev ? { ...prev, ...cfg } : { ...cfg, studioInfo: null, widgetConfig: null },
+          prev
+            ? { ...prev, ...cfg }
+            : { ...cfg, studioInfo: null, widgetConfig: null },
         );
       }
 
@@ -77,21 +81,31 @@ export function SiteDataProvider({
 
       // Fetch live studio info + widget config in parallel
       Promise.all([
-        fetch(`${KORIVA_API}/api/public/studio-info?slug=${encodeURIComponent(slug)}`)
+        fetch(
+          `${GARRISON365_API}/api/public/studio-info?slug=${encodeURIComponent(slug)}`,
+        )
           .then((r) => (r.ok ? r.json() : null))
           .catch(() => null),
-        fetch(`${KORIVA_API}/api/widgets/config?slug=${encodeURIComponent(slug)}`)
+        fetch(
+          `${GARRISON365_API}/api/widgets/config?slug=${encodeURIComponent(slug)}`,
+        )
           .then((r) => (r.ok ? r.json() : null))
           .catch(() => null),
-      ]).then(([info, widgetCfg]: [(StudioInfo & { error?: unknown }) | null, Record<string, unknown> | null]) => {
-        setCtx((prev) => {
-          if (!prev) return prev;
-          const updates: Partial<SiteContextValue> = {};
-          if (info && !info.error) updates.studioInfo = info as StudioInfo;
-          if (widgetCfg && !(widgetCfg as { error?: unknown }).error) updates.widgetConfig = widgetCfg;
-          return { ...prev, ...updates };
-        });
-      });
+      ]).then(
+        ([info, widgetCfg]: [
+          (StudioInfo & { error?: unknown }) | null,
+          Record<string, unknown> | null,
+        ]) => {
+          setCtx((prev) => {
+            if (!prev) return prev;
+            const updates: Partial<SiteContextValue> = {};
+            if (info && !info.error) updates.studioInfo = info as StudioInfo;
+            if (widgetCfg && !(widgetCfg as { error?: unknown }).error)
+              updates.widgetConfig = widgetCfg;
+            return { ...prev, ...updates };
+          });
+        },
+      );
     });
   }, []);
 
@@ -100,7 +114,7 @@ export function SiteDataProvider({
   );
 }
 
-/** Returns live Koriva config + studioInfo, or null if unavailable. */
+/** Returns live Garrison365 config + studioInfo, or null if unavailable. */
 export function useSiteData(): SiteContextValue | null {
   return useContext(SiteDataContext);
 }

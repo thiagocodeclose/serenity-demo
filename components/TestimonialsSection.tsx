@@ -1,15 +1,15 @@
 'use client';
 
 import { Reveal } from '@/components/Reveal';
-import { useKorivaElement } from '@/hooks/useKorivaElement';
+import { useGarrison365Element } from '@/hooks/useGarrison365Element';
 import { testimonials } from '@/lib/site-data';
 import Image from 'next/image';
 
 export function TestimonialsSection() {
-  const eyebrow = useKorivaElement('testimonials_eyebrow', { content: 'Stories', visible: true }, { section: 'Testimonials', label: 'Eyebrow', type: 'eyebrow' });
-  const headline = useKorivaElement('testimonials_headline', { content: 'Life Transformed', visible: true }, { section: 'Testimonials', label: 'Headline', type: 'text' });
-  const ctaCopy = useKorivaElement('testimonials_cta_copy', { content: 'Join 2,400+ members transforming their practice', visible: true }, { section: 'Testimonials', label: 'CTA Copy', type: 'text' });
-  const ctaTagline = useKorivaElement('testimonials_cta_tagline', { content: 'Your story starts with one class.', visible: true }, { section: 'Testimonials', label: 'CTA Tagline', type: 'text' });
+  const eyebrow = useGarrison365Element('testimonials_eyebrow', { content: 'Stories', visible: true }, { section: 'Testimonials', label: 'Eyebrow', type: 'eyebrow' });
+  const headline = useGarrison365Element('testimonials_headline', { content: 'Life Transformed', visible: true }, { section: 'Testimonials', label: 'Headline', type: 'text' });
+  const ctaCopy = useGarrison365Element('testimonials_cta_copy', { content: 'Join 2,400+ members transforming their practice', visible: true }, { section: 'Testimonials', label: 'CTA Copy', type: 'text' });
+  const ctaTagline = useGarrison365Element('testimonials_cta_tagline', { content: 'Your story starts with one class.', visible: true }, { section: 'Testimonials', label: 'CTA Tagline', type: 'text' });
 
   return (
     <section className="section-padding overflow-hidden" style={{ backgroundColor: 'var(--bg)' }}>

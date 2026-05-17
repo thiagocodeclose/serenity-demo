@@ -145,9 +145,9 @@ export function Footer() {
           (slug ? `${baseUrl}/member/login?gym=${slug}` : prev.portal_url),
       }));
     }
-    window.addEventListener("koriva:brand", handleBrandIntegrations);
+    window.addEventListener("garrison365:brand", handleBrandIntegrations);
     return () =>
-      window.removeEventListener("koriva:brand", handleBrandIntegrations);
+      window.removeEventListener("garrison365:brand", handleBrandIntegrations);
   }, []);
 
   return (
@@ -286,7 +286,7 @@ export function Footer() {
             rel="noopener noreferrer"
             className="font-body text-white/25 hover:text-white/50 text-xs tracking-wide transition-colors"
           >
-            Powered by Koriva
+            Powered by Garrison365
           </a>
         </div>
       </div>

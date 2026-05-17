@@ -1,19 +1,19 @@
 'use client';
 
 import { Reveal } from '@/components/Reveal';
-import { useKorivaElement } from '@/hooks/useKorivaElement';
+import { useGarrison365Element } from '@/hooks/useGarrison365Element';
 
 export function ManifestoSection() {
-  const eyebrow = useKorivaElement('manifesto_eyebrow', { content: 'Our Philosophy', visible: true }, { section: 'Manifesto', label: 'Eyebrow', type: 'eyebrow' });
-  const quote = useKorivaElement('manifesto_quote', { content: '"We believe movement is medicine.\nThat stillness is strength.\nThat your practice begins\nthe moment you decide to begin."', visible: true }, { section: 'Manifesto', label: 'Quote', type: 'text' });
-  const attribution = useKorivaElement('manifesto_attribution', { content: '— Serenity Wellness Studio · Austin', visible: true }, { section: 'Manifesto', label: 'Attribution', type: 'text' });
-  const p1Title = useKorivaElement('manifesto_pillar1_title', { content: 'The Body', visible: true }, { section: 'Manifesto', label: 'Pillar 1 Title', type: 'text' });
-  const p1Text = useKorivaElement('manifesto_pillar1_text', { content: 'Strength, flexibility, and functional movement built through consistent, intentional practice.', visible: true }, { section: 'Manifesto', label: 'Pillar 1 Text', type: 'text' });
-  const p2Title = useKorivaElement('manifesto_pillar2_title', { content: 'The Mind', visible: true }, { section: 'Manifesto', label: 'Pillar 2 Title', type: 'text' });
-  const p2Text = useKorivaElement('manifesto_pillar2_text', { content: 'Breathwork and meditation woven into every class to cultivate attention and resilience.', visible: true }, { section: 'Manifesto', label: 'Pillar 2 Text', type: 'text' });
-  const p3Title = useKorivaElement('manifesto_pillar3_title', { content: 'The Community', visible: true }, { section: 'Manifesto', label: 'Pillar 3 Title', type: 'text' });
-  const p3Text = useKorivaElement('manifesto_pillar3_text', { content: 'A sanctuary of warmth and belonging where every student is seen, held, and celebrated.', visible: true }, { section: 'Manifesto', label: 'Pillar 3 Text', type: 'text' });
-  const bgImage = useKorivaElement('manifesto_bg_image', { content: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=1920&q=80&auto=format&fit=crop', visible: true }, { section: 'Manifesto', label: 'Background Image', type: 'image' });
+  const eyebrow = useGarrison365Element('manifesto_eyebrow', { content: 'Our Philosophy', visible: true }, { section: 'Manifesto', label: 'Eyebrow', type: 'eyebrow' });
+  const quote = useGarrison365Element('manifesto_quote', { content: '"We believe movement is medicine.\nThat stillness is strength.\nThat your practice begins\nthe moment you decide to begin."', visible: true }, { section: 'Manifesto', label: 'Quote', type: 'text' });
+  const attribution = useGarrison365Element('manifesto_attribution', { content: '— Serenity Wellness Studio · Austin', visible: true }, { section: 'Manifesto', label: 'Attribution', type: 'text' });
+  const p1Title = useGarrison365Element('manifesto_pillar1_title', { content: 'The Body', visible: true }, { section: 'Manifesto', label: 'Pillar 1 Title', type: 'text' });
+  const p1Text = useGarrison365Element('manifesto_pillar1_text', { content: 'Strength, flexibility, and functional movement built through consistent, intentional practice.', visible: true }, { section: 'Manifesto', label: 'Pillar 1 Text', type: 'text' });
+  const p2Title = useGarrison365Element('manifesto_pillar2_title', { content: 'The Mind', visible: true }, { section: 'Manifesto', label: 'Pillar 2 Title', type: 'text' });
+  const p2Text = useGarrison365Element('manifesto_pillar2_text', { content: 'Breathwork and meditation woven into every class to cultivate attention and resilience.', visible: true }, { section: 'Manifesto', label: 'Pillar 2 Text', type: 'text' });
+  const p3Title = useGarrison365Element('manifesto_pillar3_title', { content: 'The Community', visible: true }, { section: 'Manifesto', label: 'Pillar 3 Title', type: 'text' });
+  const p3Text = useGarrison365Element('manifesto_pillar3_text', { content: 'A sanctuary of warmth and belonging where every student is seen, held, and celebrated.', visible: true }, { section: 'Manifesto', label: 'Pillar 3 Text', type: 'text' });
+  const bgImage = useGarrison365Element('manifesto_bg_image', { content: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=1920&q=80&auto=format&fit=crop', visible: true }, { section: 'Manifesto', label: 'Background Image', type: 'image' });
 
   return (
     <section

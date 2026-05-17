@@ -1,20 +1,20 @@
 'use client';
 
 import { Reveal } from '@/components/Reveal';
-import { useKorivaElement } from '@/hooks/useKorivaElement';
+import { useGarrison365Element } from '@/hooks/useGarrison365Element';
 import Image from 'next/image';
 
 
 export function GallerySection() {
-  const eyebrow = useKorivaElement('gallery_eyebrow', { content: 'The Space', visible: true }, { section: 'Gallery', label: 'Eyebrow', type: 'eyebrow' });
-  const headline = useKorivaElement('gallery_headline', { content: 'Designed for Presence', visible: true }, { section: 'Gallery', label: 'Headline', type: 'text' });
-  const description = useKorivaElement('gallery_description', { content: 'Every detail of our Santa Monica studio was chosen to quiet the mind before a single breath is drawn.', visible: true }, { section: 'Gallery', label: 'Description', type: 'text' });
-  const img1 = useKorivaElement('gallery_image_1', { content: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=900&q=85&auto=format&fit=crop', visible: true }, { section: 'Gallery', label: 'Image 1 (large)', type: 'image' });
-  const img2 = useKorivaElement('gallery_image_2', { content: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600&q=85&auto=format&fit=crop', visible: true }, { section: 'Gallery', label: 'Image 2', type: 'image' });
-  const img3 = useKorivaElement('gallery_image_3', { content: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=85&auto=format&fit=crop', visible: true }, { section: 'Gallery', label: 'Image 3', type: 'image' });
-  const img4 = useKorivaElement('gallery_image_4', { content: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=900&q=85&auto=format&fit=crop', visible: true }, { section: 'Gallery', label: 'Image 4 (banner)', type: 'image' });
-  const caption = useKorivaElement('gallery_caption', { content: '"Built for your practice."', visible: true }, { section: 'Gallery', label: 'Caption Quote', type: 'text' });
-  const address = useKorivaElement('gallery_address', { content: '1424 Fourth St · Santa Monica', visible: true }, { section: 'Gallery', label: 'Address', type: 'text' });
+  const eyebrow = useGarrison365Element('gallery_eyebrow', { content: 'The Space', visible: true }, { section: 'Gallery', label: 'Eyebrow', type: 'eyebrow' });
+  const headline = useGarrison365Element('gallery_headline', { content: 'Designed for Presence', visible: true }, { section: 'Gallery', label: 'Headline', type: 'text' });
+  const description = useGarrison365Element('gallery_description', { content: 'Every detail of our Santa Monica studio was chosen to quiet the mind before a single breath is drawn.', visible: true }, { section: 'Gallery', label: 'Description', type: 'text' });
+  const img1 = useGarrison365Element('gallery_image_1', { content: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=900&q=85&auto=format&fit=crop', visible: true }, { section: 'Gallery', label: 'Image 1 (large)', type: 'image' });
+  const img2 = useGarrison365Element('gallery_image_2', { content: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600&q=85&auto=format&fit=crop', visible: true }, { section: 'Gallery', label: 'Image 2', type: 'image' });
+  const img3 = useGarrison365Element('gallery_image_3', { content: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=85&auto=format&fit=crop', visible: true }, { section: 'Gallery', label: 'Image 3', type: 'image' });
+  const img4 = useGarrison365Element('gallery_image_4', { content: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=900&q=85&auto=format&fit=crop', visible: true }, { section: 'Gallery', label: 'Image 4 (banner)', type: 'image' });
+  const caption = useGarrison365Element('gallery_caption', { content: '"Built for your practice."', visible: true }, { section: 'Gallery', label: 'Caption Quote', type: 'text' });
+  const address = useGarrison365Element('gallery_address', { content: '1424 Fourth St · Santa Monica', visible: true }, { section: 'Gallery', label: 'Address', type: 'text' });
 
   return (
     <section id="studio" className="section-padding" style={{ backgroundColor: 'var(--bg)' }}>
