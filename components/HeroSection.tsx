@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { useKorivaElement } from "@/hooks/useKorivaElement";
+import { useGarrison365Element as useKorivaElement } from "@/hooks/useGarrison365Element";
 import { useSiteData } from "@/components/SiteDataProvider";
 
 /**
