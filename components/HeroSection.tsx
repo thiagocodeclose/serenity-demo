@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { useGarrison365Element } from "@/hooks/useGarrison365Element";
+import { useKorivaElement } from "@/hooks/useKorivaElement";
 import { useSiteData } from "@/components/SiteDataProvider";
 
 /**
@@ -67,23 +67,23 @@ export function HeroSection() {
     }, FADE_MS + 200);
   };
 
-  // ── Garrison365 editable elements ─────────────────────────────────
-  const eyebrow = useGarrison365Element(
+  // ── Koriva editable elements ─────────────────────────────────
+  const eyebrow = useKorivaElement(
     "hero_eyebrow",
     { content: "Yoga · Pilates · Mindful Movement", visible: true },
     { section: "Hero", label: "Eyebrow", type: "eyebrow" },
   );
-  const hl1 = useGarrison365Element(
+  const hl1 = useKorivaElement(
     "hero_headline_1",
     { content: "Stillness", visible: true },
     { section: "Hero", label: "Headline", type: "text" },
   );
-  const hl2 = useGarrison365Element(
+  const hl2 = useKorivaElement(
     "hero_headline_2",
     { content: "lives here.", visible: true },
     { section: "Hero", label: "Tagline", type: "text" },
   );
-  const subtitle = useGarrison365Element(
+  const subtitle = useKorivaElement(
     "hero_subtitle",
     {
       content: "Austin's premier sanctuary for yoga, pilates & breathwork.",
@@ -91,12 +91,12 @@ export function HeroSection() {
     },
     { section: "Hero", label: "Description", type: "text" },
   );
-  const cta1 = useGarrison365Element(
+  const cta1 = useKorivaElement(
     "hero_cta_primary",
     { content: "Book Free Class", visible: true },
     { section: "Hero", label: "CTA Primary", type: "button" },
   );
-  const cta2 = useGarrison365Element(
+  const cta2 = useKorivaElement(
     "hero_cta_secondary",
     { content: "View Schedule", visible: true },
     { section: "Hero", label: "CTA Secondary", type: "button" },
