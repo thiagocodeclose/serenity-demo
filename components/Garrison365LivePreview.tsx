@@ -619,7 +619,10 @@ export function Garrison365LivePreview() {
         viewportHeight: window.innerHeight,
       };
       refreshOverlay(id);
-      window.parent.postMessage({ type: "GARRISON365_ELEMENT_CLICK", payload: { id, computedColor, rect: elRect } }, "*");
+      window.parent.postMessage({
+          type: "GARRISON365_ELEMENT_CLICK",
+          payload: { id, content: el.innerText.trim(), computedColor, rect: elRect },
+        }, "*");
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
