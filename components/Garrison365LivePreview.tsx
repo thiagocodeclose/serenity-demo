@@ -298,6 +298,14 @@ export function Garrison365LivePreview() {
         return;
       }
 
+      if (e.data.type === "GARRISON365_SCROLL_BY") {
+        const y = e.data.payload?.y as number | undefined;
+        if (y && typeof y === "number") {
+          window.scrollBy({ top: y, behavior: "smooth" });
+        }
+        return;
+      }
+
       if (e.data.type === "GARRISON365_INLINE_EDIT_REQUEST") {
         // Admin detected double-click — activate inline editing for this element
         const id = e.data.payload?.id as string | undefined;
